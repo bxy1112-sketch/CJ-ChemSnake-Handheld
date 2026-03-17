@@ -21,9 +21,9 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(fullVersion),
   },
-  // IMPORTANT: This sets the base path for GitHub Pages.
-  // It must match your repository name.
-  base: '/CJ-ChemSnake-Handheld/', 
+  // IMPORTANT: This sets the base path to relative.
+  // This is the most portable setting for GitHub Pages.
+  base: './', 
   build: {
     outDir: 'dist',
     assetsDir: 'assets',

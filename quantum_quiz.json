@@ -1,0 +1,42 @@
+{
+  "subjectCategory": "量子力学基础",
+  "compounds": {
+    "PSI_SQ": {
+      "formula": "|ψ(x,y,z,t)|²",
+      "zh": { "name": "波函数模平方" },
+      "en": { "name": "Probability Density" }
+    },
+    "DESC": {
+      "formula": "描述正确的是",
+      "zh": { "name": "物理意义" },
+      "en": { "name": "Physical Meaning" }
+    }
+  },
+  "reactions": [
+    {
+      "chapter": "QUANTUM",
+      "from": "PSI_SQ",
+      "to": "DESC",
+      "type": "PROB_DENSITY",
+      "cond": { "zh": "Born 统计解释", "en": "Born Interpretation" }
+    }
+  ],
+  "rxnTypes": {
+    "PROB_DENSITY": {
+      "zh": "时刻 t，粒子出现在空间某点 (x, y, z) 的概率密度",
+      "en": "Probability density at (x,y,z) at time t"
+    },
+    "VOLUME_ELEMENT": {
+      "zh": "代表空间某处 (x, y, z) 的微体积元",
+      "en": "Volume element at (x,y,z)"
+    },
+    "PROBABILITY": {
+      "zh": "时刻 t，粒子出现在空间某点 (x, y, z) 的概率",
+      "en": "Probability at (x,y,z) at time t"
+    },
+    "TOTAL_PROB": {
+      "zh": "时刻 t，在整个空间出现的概率",
+      "en": "Total probability in space"
+    }
+  }
+}

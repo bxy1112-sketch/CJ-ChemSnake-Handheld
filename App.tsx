@@ -41,6 +41,12 @@ export interface Reaction {
   to: string;
   type: string;
   cond: { zh: string; en: string };
+  distractors?: {
+      product?: string[];
+      reactant?: string[];
+      cond?: { zh: string; en: string }[];
+      type?: string[];
+  };
 }
 
 export const COMPOUNDS_CORE: Record<string, Compound> = {
@@ -459,7 +465,7 @@ const CHAPTER_ORDER =[
 ];
 
 const AUDIO_PATHS = {
-  bgm: './assets/bgm.mp3',
+  bgm: './bgm.mp3',
 };
 
 const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
@@ -1321,7 +1327,7 @@ const App = () => {
       snake, snake2, direction, direction2, nextDir, nextDir2, food, gameState, settings, score, score2, combo, combo2, maxCombo, maxCombo2, 
       currentRxn, gameMode, history, grid: gridRef.current,
       menuPage, menuIndex, availableChapters,
-      dbCompounds, dbReactions, dbSymmetry, dbRxnTypes, timeLeft,
+      dbCompounds, dbReactions, dbSymmetry, dbRxnTypes, timeLeft, importedDataList,
       isTutorial, isVersus, tutorialStep,
       isSymmetry, currentSymmetry, collectedElements
   });
@@ -1331,7 +1337,7 @@ const App = () => {
         snake, snake2, direction, direction2, nextDir, nextDir2, food, gameState, settings, score, score2, combo, combo2, maxCombo, maxCombo2, 
         currentRxn, gameMode, history, grid: gridRef.current,
         menuPage, menuIndex, availableChapters,
-        dbCompounds, dbReactions, dbSymmetry, dbRxnTypes, timeLeft,
+        dbCompounds, dbReactions, dbSymmetry, dbRxnTypes, timeLeft, importedDataList,
         isTutorial, isVersus, tutorialStep,
         isSymmetry, currentSymmetry, collectedElements
     };
@@ -1889,6 +1895,78 @@ const App = () => {
      return null;
   };
 
+  const getDistractorPool = (mode: GameMode, rxn: Reaction, state: any) => {
+    const currentChapter = rxn.chapter;
+    const isCustom = currentChapter.startsWith('CUSTOM_');
+    
+    let correctVal: string;
+    if (mode === 'product') correctVal = rxn.to;
+    else if (mode === 'cond') correctVal = JSON.stringify(rxn.cond);
+    else if (mode === 'type') correctVal = rxn.type;
+    else correctVal = rxn.from;
+
+    if (rxn.distractors) {
+        if (mode === 'product' && rxn.distractors.product && rxn.distractors.product.length > 0) {
+            return rxn.distractors.product.filter(c => c !== correctVal);
+        }
+        if (mode === 'reactant' && rxn.distractors.reactant && rxn.distractors.reactant.length > 0) {
+            return rxn.distractors.reactant.filter(c => c !== correctVal);
+        }
+        if (mode === 'cond' && rxn.distractors.cond && rxn.distractors.cond.length > 0) {
+            return rxn.distractors.cond.map(c => JSON.stringify(c)).filter(c => c !== correctVal);
+        }
+        if (mode === 'type' && rxn.distractors.type && rxn.distractors.type.length > 0) {
+            return rxn.distractors.type.filter(c => c !== correctVal);
+        }
+    }
+
+    if (mode === 'type') {
+        let pool: string[] = [];
+        if (isCustom && state.importedDataList) {
+            const importData = state.importedDataList.find((d: any) => d.customChapterId === currentChapter);
+            if (importData && importData.rxnTypes) {
+                pool = Object.keys(importData.rxnTypes).filter(c => c !== correctVal);
+            }
+        }
+        if (pool.length < 1) {
+            const defaultTypes = Object.keys(state.dbRxnTypes);
+            pool = [...new Set([...state.dbReactions.map((r: any) => r.type), ...defaultTypes])].filter(c => c !== correctVal);
+        }
+        return pool;
+    }
+    
+    if (mode === 'cond') {
+        const defaultConds = [
+          { zh: '加热', en: 'Heat' }, { zh: '光照', en: 'Light' }, { zh: '催化剂', en: 'Catalyst' },
+          { zh: '高温高压', en: 'High T&P' }, { zh: '点燃', en: 'Ignite' }, { zh: '浓H₂SO₄', en: 'Conc. H₂SO₄' },
+          { zh: 'NaOH', en: 'NaOH' }, { zh: 'H₂O', en: 'H₂O' }
+        ];
+        let pool: string[] = [];
+        if (isCustom && state.importedDataList) {
+            const importData = state.importedDataList.find((d: any) => d.customChapterId === currentChapter);
+            if (importData && importData.reactions) {
+                pool = [...new Set(importData.reactions.map((r: any) => JSON.stringify(r.cond))) as Set<string>].filter(c => c !== correctVal);
+            }
+        }
+        if (pool.length < 1) {
+            pool = [...new Set([...state.dbReactions.map((r: any) => JSON.stringify(r.cond)), ...defaultConds.map(c => JSON.stringify(c))]) as Set<string>].filter(c => c !== correctVal);
+        }
+        return pool;
+    }
+    
+    let pool: string[] = [];
+    if (isCustom && state.importedDataList) {
+        const importData = state.importedDataList.find((d: any) => d.customChapterId === currentChapter);
+        if (importData && importData.compounds) {
+            pool = Object.keys(importData.compounds).filter(k => k !== rxn.from && k !== rxn.to);
+        }
+    }
+    if (pool.length < 1) {
+        pool = Object.keys(state.dbCompounds).filter(k => k !== rxn.from && k !== rxn.to);
+    }
+    return pool;
+  };
+
   const nextQuestion = (pool = getFilteredReactions(), newRecord?: HistoryRecord) => {
     const state = stateRef.current;
     const selected = state.settings.selectedChapters;
@@ -1985,10 +2063,18 @@ const App = () => {
 
     const remainingQs: {rxn: Reaction, mode: GameMode}[] =[];
     pool.forEach(r => {
-        if (!solvedSigs.has(`${r.from}_${r.to}_product`)) remainingQs.push({rxn: r, mode: 'product'});
-        if (!solvedSigs.has(`${r.from}_${r.to}_cond`)) remainingQs.push({rxn: r, mode: 'cond'});
-        if (!solvedSigs.has(`${r.from}_${r.to}_reactant`)) remainingQs.push({rxn: r, mode: 'reactant'});
-        if (!solvedSigs.has(`${r.from}_${r.to}_type`)) remainingQs.push({rxn: r, mode: 'type'});
+        let allowedModes: GameMode[] = ['product', 'cond', 'reactant', 'type'];
+        if (r.distractors) {
+            const explicitModes = Object.keys(r.distractors).filter(k => r.distractors![k as keyof typeof r.distractors]?.length) as GameMode[];
+            if (explicitModes.length > 0) {
+                allowedModes = explicitModes;
+            }
+        }
+        
+        if (allowedModes.includes('product') && !solvedSigs.has(`${r.from}_${r.to}_product`)) remainingQs.push({rxn: r, mode: 'product'});
+        if (allowedModes.includes('cond') && !solvedSigs.has(`${r.from}_${r.to}_cond`)) remainingQs.push({rxn: r, mode: 'cond'});
+        if (allowedModes.includes('reactant') && !solvedSigs.has(`${r.from}_${r.to}_reactant`)) remainingQs.push({rxn: r, mode: 'reactant'});
+        if (allowedModes.includes('type') && !solvedSigs.has(`${r.from}_${r.to}_type`)) remainingQs.push({rxn: r, mode: 'type'});
     });
 
     if (remainingQs.length === 0) {
@@ -2019,21 +2105,7 @@ const App = () => {
     const diff = state.settings.difficulty;
     const { options: targetCount } = DIFFICULTY_CONFIG[diff];
     const opts = [correctVal];
-    const allCompounds = Object.keys(state.dbCompounds).filter(k => k !== rxn.from && k !== rxn.to);
-    const defaultConds = [
-      { zh: '加热', en: 'Heat' },
-      { zh: '光照', en: 'Light' },
-      { zh: '催化剂', en: 'Catalyst' },
-      { zh: '高温高压', en: 'High T&P' },
-      { zh: '点燃', en: 'Ignite' },
-      { zh: '浓H₂SO₄', en: 'Conc. H₂SO₄' },
-      { zh: 'NaOH', en: 'NaOH' },
-      { zh: 'H₂O', en: 'H₂O' }
-    ];
-    const allConds =[...new Set([...state.dbReactions.map(r => JSON.stringify(r.cond)), ...defaultConds.map(c => JSON.stringify(c))])].filter(c => c !== correctVal);
-    const defaultTypes = Object.keys(state.dbRxnTypes);
-    const allTypes =[...new Set([...state.dbReactions.map(r => r.type), ...defaultTypes])].filter(c => c !== correctVal);
-    const distPool = mode === 'cond' ? allConds : (mode === 'type' ? allTypes : allCompounds);
+    const distPool = getDistractorPool(mode, rxn, state);
 
     let optAttempts = 0;
     while (opts.length < targetCount && distPool.length > 0 && optAttempts < 50) {
@@ -2060,28 +2132,24 @@ const App = () => {
 
   const spawnDistractors = (count: number) => {
     const state = stateRef.current;
-    const rxn = state.currentRxn;
-    if (!rxn) return;
     const mode = state.gameMode;
-    const allCompounds = Object.keys(state.dbCompounds).filter(k => k !== rxn.from && k !== rxn.to);
     
-    let correctVal: string;
-    if (mode === 'product') correctVal = rxn.to;
-    else if (mode === 'cond') correctVal = JSON.stringify(rxn.cond);
-    else correctVal = rxn.from;
-
-    const defaultConds = [
-      { zh: '加热', en: 'Heat' },
-      { zh: '光照', en: 'Light' },
-      { zh: '催化剂', en: 'Catalyst' },
-      { zh: '高温高压', en: 'High T&P' },
-      { zh: '点燃', en: 'Ignite' },
-      { zh: '浓H₂SO₄', en: 'Conc. H₂SO₄' },
-      { zh: 'NaOH', en: 'NaOH' },
-      { zh: 'H₂O', en: 'H₂O' }
-    ];
-    const allConds =[...new Set([...state.dbReactions.map(r => JSON.stringify(r.cond)), ...defaultConds.map(c => JSON.stringify(c))])].filter(c => c !== correctVal);
-    const distPool = mode === 'cond' ? allConds : allCompounds;
+    let distPool: string[] = [];
+    if (mode === 'symmetry') {
+        const sym = state.currentSymmetry;
+        if (!sym) return;
+        const missing = sym.elements || [];
+        distPool = [...sym.wrong];
+        const globalWrongPool = ['E', 'C₂', 'C₃', 'C₄', 'C₅', 'C₆', 'i', 'σh', 'σv', 'σd', 'S₃', 'S₄', 'S₆', 'S₈', 'Oh', 'Td', 'D∞h', 'C∞v', 'D3h', 'C2v'];
+        distPool.push(...globalWrongPool);
+        distPool = distPool.filter(c => !missing.includes(c));
+    } else {
+        const rxn = state.currentRxn;
+        if (!rxn) return;
+        distPool = getDistractorPool(mode, rxn, state);
+    }
+    
+    if (distPool.length === 0) return;
 
     setFood(prev => {
         const nextFood = [...prev];
@@ -3117,11 +3185,24 @@ const App = () => {
   }, [history]);
 
   const generateAIReportAnalysis = async () => {
-      const effectiveApiKey = apiKey || (import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) || '';
+      const env = (window as any).process?.env || {};
+      const envApiKey = env.API_KEY || env.GEMINI_API_KEY || '';
+      let effectiveApiKey = apiKey || envApiKey;
       
       if (!effectiveApiKey && llmProvider === 'gemini') {
-          showAlert(settings.language === 'zh' ? '请先在设置中配置 Gemini API Key' : 'Please configure Gemini API Key in settings');
-          return null;
+          if ((window as any).aistudio) {
+              try {
+                  await (window as any).aistudio.openSelectKey();
+                  const newEnv = (window as any).process?.env || {};
+                  effectiveApiKey = apiKey || newEnv.API_KEY || newEnv.GEMINI_API_KEY || '';
+              } catch (err) {
+                  console.error('Failed to open key selector:', err);
+              }
+          }
+          if (!effectiveApiKey) {
+              showAlert(settings.language === 'zh' ? '请先在设置中配置 Gemini API Key' : 'Please configure Gemini API Key in settings');
+              return null;
+          }
       } else if (!apiKey && llmProvider !== 'gemini' && llmProvider !== 'custom') {
           showAlert(settings.language === 'zh' ? '请先在设置中配置 API Key' : 'Please configure API Key in settings');
           return null;
@@ -3151,7 +3232,7 @@ const App = () => {
           let responseText = '';
 
           if (llmProvider === 'gemini') {
-              const ai = new GoogleGenAI({ apiKey: effectiveApiKey });
+              const ai = new GoogleGenAI(effectiveApiKey ? { apiKey: effectiveApiKey } : {});
               const response = await ai.models.generateContent({
                   model: 'gemini-3.1-pro-preview',
                   contents: promptText,
@@ -3498,6 +3579,9 @@ const App = () => {
          const c = getComp(f.val, settings.language);
          label = c.formula;
          nameLabel = c.name;
+         if (label === nameLabel) {
+             nameLabel = '';
+         }
       }
       const isCompact = canvas.width / dpr < 500; 
       const labelFontSize = isCompact ? 11 : 14; 
@@ -4122,13 +4206,26 @@ const App = () => {
           if (e) e.target.value = '';
       };
       
-      const effectiveApiKey = apiKey || (import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) || '';
+      const env = (window as any).process?.env || {};
+      const envApiKey = env.API_KEY || env.GEMINI_API_KEY || '';
+      let effectiveApiKey = apiKey || envApiKey;
 
       if (!effectiveApiKey && llmProvider === 'gemini') {
-          play('error');
-          showAlert(settings.language === 'zh' ? '请先在设置中配置 Gemini API Key' : 'Please configure Gemini API Key in settings first');
-          clearInput();
-          return;
+          if ((window as any).aistudio) {
+              try {
+                  await (window as any).aistudio.openSelectKey();
+                  const newEnv = (window as any).process?.env || {};
+                  effectiveApiKey = apiKey || newEnv.API_KEY || newEnv.GEMINI_API_KEY || '';
+              } catch (err) {
+                  console.error('Failed to open key selector:', err);
+              }
+          }
+          if (!effectiveApiKey) {
+              play('error');
+              showAlert(settings.language === 'zh' ? '请先在设置中配置 Gemini API Key' : 'Please configure Gemini API Key in settings first');
+              clearInput();
+              return;
+          }
       } else if (!apiKey && llmProvider !== 'gemini' && llmProvider !== 'custom') {
           play('error');
           showAlert(settings.language === 'zh' ? '请先在设置中配置 API Key' : 'Please configure API Key in settings first');
@@ -4205,12 +4302,113 @@ const App = () => {
           - GOOD: from: "Ester", to: "Carboxylic Acid + Alcohol", cond: "H₂O/H⁺, Δ" (Testing the concept)
 
           =========================================================
-          DIFFICULTY & COMPLEXITY (难度与深度)
+          DIFFICULTY, COMPLEXITY & VARIETY (难度、深度与多样性)
           =========================================================
           - DO NOT generate trivial or basic questions (e.g., "Water -> H2O" or "Na + Cl -> NaCl").
           - Generate ADVANCED, challenging questions suitable for university-level chemistry or chemistry olympiads.
           - Focus on: tricky exceptions, complex mechanisms, regioselectivity (Markovnikov/anti-Markovnikov, Zaitsev/Hofmann), stereochemistry (R/S, E/Z, syn/anti addition), advanced reagents (e.g., DIBAL-H, PCC, Grignard, Wittig), and critical intermediates.
           - If the source material is simple, ELEVATE the difficulty by asking about the underlying mechanism, the catalyst's role, or a related advanced concept.
+          - AVOID REPETITION: Do not generate multiple questions testing the exact same concept or reaction. Ensure a diverse set of questions.
+
+          =========================================================
+          SCENARIO-SPECIFIC EXTRACTION STRATEGIES (场景化出题策略)
+          =========================================================
+          You must adapt your extraction strategy based on the visual or textual content. Do not just blindly copy text; understand the SCENARIO and generate targeted questions:
+          
+          1. MULTI-STEP SYNTHESIS FLOWCHARTS (多步合成路线):
+          - Do NOT just extract the final product. Extract EACH logical step as a separate reaction.
+          - If a reagent is missing (e.g., A --?--> B), frame it so the player must identify the reagent. (e.g., "from": "A -> B", "to": "Reagent").
+          - If an intermediate is missing (e.g., A --Reagent--> ?), make the intermediate the answer.
+          
+          2. SPECTRA & GRAPHS (NMR, IR, MS, Titration Curves, Phase Diagrams):
+          - For IR: "from: Wavenumber (e.g., 1700 cm⁻¹)", "to: Functional Group (e.g., C=O)".
+          - For NMR: "from: Chemical Shift / Splitting", "to: Proton Environment".
+          - For Titration: "from: Equivalence Point / Buffer Region", "to: Dominant Species / pKa".
+          - For Phase Diagrams: "from: Triple Point / Eutectic Point", "to: Coexisting Phases".
+          
+          3. EXPERIMENTAL SETUPS & APPARATUS (实验装置图):
+          - "from: Apparatus Name / Setup", "to: Purpose / Function".
+          - "from: Reagent used in wash bottle", "to: Impurity removed".
+          
+          4. MECHANISMS (反应机理):
+          - "from: Reactant + Reagent", "to: Reactive Intermediate (Carbocation, Carbanion, Radical)".
+          - "from: Intermediate", "to: Rearrangement Product (e.g., 1,2-hydride shift)".
+          
+          5. DATA TABLES (数据表格):
+          - Extract trends or anomalies. "from: Highest Electronegativity in Group 17", "to: Fluorine".
+          
+          6. COMPLEX MOLECULES (复杂分子结构图):
+          - Do not just extract the name. Ask about its properties!
+          - "from: Number of chiral centers in [Molecule]", "to: 3".
+          - "from: Most acidic proton in [Molecule]", "to: Carboxylic OH".
+          - "from: Functional groups present in [Molecule]", "to: Ester, Amine, Phenol".
+
+          =========================================================
+          COGNITIVE PROCESS (思考与推理过程)
+          =========================================================
+          Before generating the JSON output, you MUST analyze the source text deeply as an Expert Educator. Do not just blindly extract text.
+          1. What is the CORE EDUCATIONAL CONCEPT being tested?
+          2. How can this concept be mapped into a clear, elegant "A -> B" relationship for a matching game?
+          3. If the question is a wordy multiple-choice question, distill it into its purest form. The "from" field can be a concise question or scenario, and the "to" field is the answer.
+          4. You MUST include a "_thought_process" field at the very beginning of your JSON output, explaining your reasoning for how you designed the questions and why you chose the specific "from", "to", "cond", and "type" mappings.
+
+          =========================================================
+          HOW TO FRAME THE QUESTION (如何设计题目)
+          =========================================================
+          The game engine uses the "from" and "to" fields to create the matching pair. You must carefully decide what goes into these fields based on what the question is testing.
+          
+          - If testing PRODUCT prediction: "from" = Reactants, "to" = Product.
+          - If testing REAGENT selection: "from" = Reactant -> Product, "to" = Reagent.
+          - If testing CONCEPT understanding: "from" = Concept/Definition, "to" = Term/Name. Set \`cond\` to the context (e.g., "Physical Meaning") and set \`type\` to "NONE".
+          - If testing PROPERTY comparison: "from" = "Highest Boiling Point among X, Y, Z", "to" = "X". Set \`cond\` to "Property" and set \`type\` to "NONE".
+          - If testing REACTION TYPE: "from" = Reactant -> Product, "to" = "Reaction Type Name" (and set \`type\` to "CLASSIFICATION").
+
+          =========================================================
+          QUESTION TYPES & DISTRACTOR LOGIC (题型与干扰项生成逻辑)
+          =========================================================
+          You must identify the type of question (Multiple Choice, True/False, Fill-in-the-blank, Short Answer) and generate distractors accordingly.
+          CRITICAL REQUIREMENT: Distractors MUST strictly belong to the same chemical sub-discipline (Organic, Inorganic, Physical, Analytical, etc.) and context as the correct answer. NEVER mix inorganic distractors into an organic question, or vice versa. This is a fundamental requirement.
+
+          1. MULTIPLE CHOICE (选择题):
+          - CRITICAL: For ONE multiple-choice question, you MUST generate EXACTLY ONE reaction object. Do NOT generate a separate reaction for each wrong option.
+          - You MUST extract the exact wrong options provided in the source text and put them ALL in the \`distractors\` object of that SINGLE reaction.
+          
+          2. TRUE/FALSE (判断题):
+          - The "from" is the core concept or statement. The "to" is the correct judgment or fact.
+          - The distractor MUST be the opposite judgment or a common misconception.
+
+          3. FILL-IN-THE-BLANK / SHORT ANSWER / GENERAL REACTIONS (填空/简答/常规方程式):
+          - You MUST GENERATE 3 highly plausible, chemically reasonable distractors.
+          - For Organic: Use wrong regioselectivity (Markovnikov vs anti-Markovnikov), wrong stereochemistry (E/Z, R/S), or products of competing reactions (SN1 vs E1).
+          - For Inorganic: Use wrong oxidation states, similar but incorrect ligands, or wrong precipitate formulas.
+          - For Physical: Use inverse formulas, wrong signs (+/-), or closely related but incorrect terms.
+
+          HOW TO FORMAT DISTRACTORS:
+          - Place the wrong options in the \`distractors\` object inside the reaction.
+          - CRITICAL MAPPING: The game engine uses specific modes. 
+            - If your answer is in the "to" field (e.g., Product, Reagent, Term), put the distractors in \`distractors.product\`.
+            - If your answer is in the "from" field (e.g., Reactant, Concept), put the distractors in \`distractors.reactant\`.
+            - If your answer is in the "cond" field, put the distractors in \`distractors.cond\`.
+            - If your answer is in the "type" field, put the distractors in \`distractors.type\`.
+          - CRITICAL RULE FOR "type": The \`type\` field is strictly for the CATEGORY of the reaction (e.g., "Addition", "Oxidation", "Definition"). NEVER put the actual answer in the \`type\` field. If the question asks for a concept name, put it in the \`to\` field and use \`distractors.product\`.
+          - ALL compounds referenced in \`distractors.product\` or \`distractors.reactant\` MUST be defined in the \`compounds\` dictionary.
+          - ALL types referenced in \`distractors.type\` MUST be defined in the \`rxnTypes\` dictionary.
+          
+          Example for a multiple-choice product question:
+          "_thought_process": "The user provided a reaction between A and B forming C. This is a standard product prediction question. I will map A+B to C.",
+          "compounds": { "A": {...}, "B": {...}, "C": {...}, "D": {...}, "E": {...}, "F": {...} }
+          "reactions": [ { "chapter": "ORG", "from": "A + B", "to": "C", "type": "ADDITION", "cond": {"zh": "加热", "en": "Heat"}, "distractors": { "product": ["D", "E", "F"] } } ]
+
+          Example for a concept question (e.g., "|ψ(x,y,z,t)|²"):
+          "_thought_process": "The question asks for the physical meaning of the wavefunction modulus squared. This is a concept question. I will map the formula to its meaning ('Probability Density'). I will use 'Physical Meaning' as the condition and 'NONE' for the type.",
+          "compounds": { "PSI_SQ": { "formula": "|ψ(x,y,z,t)|²", "zh": {"name": "波函数模平方"}, "en": {"name": "Wavefunction Modulus Squared"} }, "PROB_DENSITY": { "formula": "概率密度", "zh": {"name": "概率密度"}, "en": {"name": "Probability Density"} }, "VOLUME_ELEMENT": { "formula": "微体积元", "zh": {"name": "微体积元"}, "en": {"name": "Volume element"} }, "PROBABILITY": { "formula": "概率", "zh": {"name": "概率"}, "en": {"name": "Probability"} }, "TOTAL_PROB": { "formula": "总概率", "zh": {"name": "总概率"}, "en": {"name": "Total probability"} } }
+          "reactions": [ { "chapter": "QUANTUM", "from": "PSI_SQ", "to": "PROB_DENSITY", "type": "NONE", "cond": {"zh": "物理意义", "en": "Physical Meaning"}, "distractors": { "product": ["VOLUME_ELEMENT", "PROBABILITY", "TOTAL_PROB"] } } ]
+          "rxnTypes": {}
+
+          Example for a wordy multiple-choice question:
+          "_thought_process": "The source asks: 'Which statement about the photoelectric effect is correct? A) Proves wave nature B) E_k depends on intensity C) Threshold frequency exists D) Any frequency works'. The core concept is the photoelectric effect. I will distill this into 'from: Photoelectric Effect', 'to: Threshold frequency exists'. The distractors are the false statements.",
+          "compounds": { "PHOTOELECTRIC": { "formula": "光电效应", "zh": {"name": "光电效应"}, "en": {"name": "Photoelectric Effect"} }, "THRESHOLD": { "formula": "存在极限频率", "zh": {"name": "存在极限频率"}, "en": {"name": "Threshold frequency exists"} }, "WAVE_NATURE": { "formula": "证明波动性", "zh": {"name": "证明波动性"}, "en": {"name": "Proves wave nature"} }, "INTENSITY_DEP": { "formula": "E_k与光强有关", "zh": {"name": "E_k与光强有关"}, "en": {"name": "E_k depends on intensity"} }, "ANY_FREQ": { "formula": "任意频率均可", "zh": {"name": "任意频率均可"}, "en": {"name": "Occurs at any frequency"} } }
+          "reactions": [ { "chapter": "QUANTUM", "from": "PHOTOELECTRIC", "to": "THRESHOLD", "type": "NONE", "cond": {"zh": "正确表述", "en": "Correct Statement"}, "distractors": { "product": ["WAVE_NATURE", "INTENSITY_DEP", "ANY_FREQ"] } } ]
 
           =========================================================
           GAME MODES & DATA STRUCTURE
@@ -4226,7 +4424,7 @@ const App = () => {
           2. "symmetry": ONLY generate this if the text is EXPLICITLY about point groups (e.g., C2v, D3h) or symmetry elements (C3, σv, i). Otherwise, leave empty [].
           
           3. "compounds": A dictionary of ALL terms used in "from" and "to". 
-             - "formula": MUST BE A CHEMICAL FORMULA (e.g., "H₂O", "CH₃COOH", "C₆H₅Br"). DO NOT PUT LONG NAMES HERE. If it's a concept, use a very short abbreviation (max 10 chars).
+             - "formula": MUST BE A CHEMICAL FORMULA (e.g., "H₂O", "CH₃COOH", "C₆H₅Br"). DO NOT PUT LONG NAMES HERE. If it's a concept or term, use a concise abbreviation or short phrase (max 15 chars).
              - "zh": { "name": "Chinese Name" }
              - "en": { "name": "English Name" }
           
@@ -4243,13 +4441,13 @@ const App = () => {
               - "rxnTypes": { "CustomTypeKey": { "zh": "Chinese Name", "en": "English Name" } }
           8. Output ONLY valid JSON. Do not wrap in markdown code blocks (\`\`\`json). Start directly with { and end with }.
 
-          Return a JSON object with keys: "compounds", "reactions", "symmetry", "rxnTypes" (optional), and "subjectCategory" (e.g., "ORGANIC", "INORGANIC", "PHYSICAL", "ANALYTICAL", or "STRUCTURAL").
+          Return a JSON object with keys: "_thought_process", "compounds", "reactions", "symmetry", "rxnTypes" (optional), and "subjectCategory" (e.g., "ORGANIC", "INORGANIC", "PHYSICAL", "ANALYTICAL", or "STRUCTURAL").
           `;
 
           let responseText = '';
 
           if (llmProvider === 'gemini') {
-              const ai = new GoogleGenAI({ apiKey: effectiveApiKey });
+              const ai = new GoogleGenAI(effectiveApiKey ? { apiKey: effectiveApiKey } : {});
               const parts: any[] = [{ text: promptText }];
               if (base64Data) {
                   parts.push({ inlineData: { mimeType: mimeType, data: base64Data } });
@@ -4597,14 +4795,25 @@ const App = () => {
                                   {isTutorial ? '3/100' : (() => {
                                       const selected = settings.selectedChapters;
                                       let total = 0;
+                                      const getReactionModesCount = (r: any) => {
+                                          let allowedModes = ['product', 'cond', 'reactant', 'type'];
+                                          if (r.distractors) {
+                                              const explicitModes = Object.keys(r.distractors).filter(k => r.distractors[k]?.length);
+                                              if (explicitModes.length > 0) {
+                                                  allowedModes = explicitModes;
+                                              }
+                                          }
+                                          return allowedModes.length;
+                                      };
+
                                       if (selected.length === 0) {
-                                          total = (dbReactions || []).length * 3 + (dbSymmetry || []).length;
+                                          total = (dbReactions || []).reduce((acc: number, r: any) => acc + getReactionModesCount(r), 0) + (dbSymmetry || []).length;
                                       } else {
                                           total += (dbReactions || []).filter((r: any) => {
                                               if (r.bankId && selected.includes(r.bankId)) return true;
                                               if (selected.includes('ORGANIC') && !r.chapter.startsWith('CUSTOM_') && !['INORGANIC', 'STRUCTURAL', 'PHYSICAL', 'ANALYTICAL'].includes(r.chapter)) return true;
                                               return selected.includes(r.chapter);
-                                          }).length * 3;
+                                          }).reduce((acc: number, r: any) => acc + getReactionModesCount(r), 0);
                                           total += (dbSymmetry || []).filter((s: any) => {
                                               if (s.bankId && selected.includes(s.bankId)) return true;
                                               if (selected.includes('STRUCTURAL') && !s.bankId) return true;
@@ -4698,15 +4907,19 @@ const App = () => {
                                             </div>
                                         </div>
                                         <div className="flex flex-col items-center justify-center px-1 mx-2 shrink-0">
-                                           <div style={{backgroundColor: gameMode === 'cond' ? themeColors.darkHex : currentTextColor, color: gameMode === 'cond' ? themeColors.lightHex : currentBgColor}} className={`text-sm text-center whitespace-nowrap border px-2 py-0.5 rounded z-10 font-led shadow-sm mb-1.5 transition-all ${gameMode === 'cond' ? 'animate-pulse ring-2 ring-theme-light shadow-lg scale-110' : ''}`}>
-                                              {condText}
-                                           </div>
+                                           {condText && condText !== 'NONE' && condText !== '无' && (
+                                               <div style={{backgroundColor: gameMode === 'cond' ? themeColors.darkHex : currentTextColor, color: gameMode === 'cond' ? themeColors.lightHex : currentBgColor}} className={`text-sm text-center whitespace-nowrap border px-2 py-0.5 rounded z-10 font-led shadow-sm mb-1.5 transition-all ${gameMode === 'cond' ? 'animate-pulse ring-2 ring-theme-light shadow-lg scale-110' : ''}`}>
+                                                  {condText}
+                                               </div>
+                                           )}
                                            <div style={{backgroundColor: currentTextColor}} className="w-full h-[2px] relative mt-0 opacity-50">
                                               <div style={{borderLeftColor: currentTextColor}} className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-t-[4px] border-t-transparent border-l-[6px] border-b-[4px] border-b-transparent"></div>
                                            </div>
-                                           <div style={{backgroundColor: gameMode === 'type' ? themeColors.darkHex : 'transparent', color: gameMode === 'type' ? themeColors.lightHex : currentTextColor}} className={`text-[10px] text-center whitespace-nowrap px-1 py-0.5 rounded z-10 font-bold mt-1 transition-all ${gameMode === 'type' ? 'animate-pulse ring-1 ring-theme-light shadow-sm scale-110' : 'opacity-70'}`}>
-                                              {gameMode === 'type' ? '???' : (settings.language === 'zh' ? (dbRxnTypes[currentRxn.type]?.zh || currentRxn.type) : (dbRxnTypes[currentRxn.type]?.en || currentRxn.type))}
-                                           </div>
+                                           {currentRxn.type && currentRxn.type !== 'NONE' && currentRxn.type !== '无' && (
+                                               <div style={{backgroundColor: gameMode === 'type' ? themeColors.darkHex : 'transparent', color: gameMode === 'type' ? themeColors.lightHex : currentTextColor}} className={`text-[10px] text-center whitespace-nowrap px-1 py-0.5 rounded z-10 font-bold mt-1 transition-all ${gameMode === 'type' ? 'animate-pulse ring-1 ring-theme-light shadow-sm scale-110' : 'opacity-70'}`}>
+                                                  {gameMode === 'type' ? '???' : (settings.language === 'zh' ? (dbRxnTypes[currentRxn.type]?.zh || currentRxn.type) : (dbRxnTypes[currentRxn.type]?.en || currentRxn.type))}
+                                               </div>
+                                           )}
                                         </div>
                                         <div className="flex-1 flex justify-start min-w-0">
                                            <div className="flex flex-col items-center max-w-full">
@@ -4928,7 +5141,6 @@ const App = () => {
                                                                   onClick={async () => {
                                                                       try {
                                                                           await (window as any).aistudio.openSelectKey();
-                                                                          showAlert(settings.language === 'zh' ? 'API Key 已选择！' : 'API Key selected!');
                                                                       } catch (err) {
                                                                           console.error('Failed to open key selector:', err);
                                                                       }
@@ -5103,8 +5315,8 @@ const App = () => {
                                       ) : (
                                           <>
                                               <FileJson size={24} className="mb-1 sm:mb-2"/>
-                                              <span className="text-sm sm:text-base font-bold text-center">{settings.language === 'zh' ? '点击上传 JSON/图片/PDF/Word/Excel/TXT' : 'Tap to upload JSON/Image/PDF/Word/Excel/TXT'}</span>
-                                              <input type="file" accept=".json,image/*,application/pdf,text/plain,.doc,.docx,.xls,.xlsx" onChange={handleImportFile} disabled={isGenerating} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                              <span className="text-sm sm:text-base font-bold text-center">{settings.language === 'zh' ? '点击上传 JSON/图片/TXT' : 'Tap to upload JSON/Image/TXT'}</span>
+                                              <input type="file" accept=".json,image/*,text/plain" onChange={handleImportFile} disabled={isGenerating} className="absolute inset-0 opacity-0 cursor-pointer" />
                                           </>
                                       )}
                                   </div>
@@ -5112,15 +5324,16 @@ const App = () => {
                                   {!isGenerating && (
                                       <div className="mb-2 shrink-0">
                                           <div className="flex justify-between items-center mb-1">
-                                              <label className="text-xs font-bold opacity-80">{settings.language === 'zh' ? '或粘贴化学文本/笔记' : 'Or Paste Chemistry Text/Notes'}</label>
+                                              <label className="text-xs font-bold opacity-80">{settings.language === 'zh' ? '或手动粘贴 JSON 题库代码：' : 'Or Paste JSON Code:'}</label>
                                               <button 
                                                   onClick={() => {
                                                       const text = prompt(settings.language === 'zh' ? '请输入化学相关文本、笔记或反应方程式：' : 'Please enter chemistry text, notes, or equations:');
                                                       if (text) handleAIImport(undefined, text);
                                                   }}
-                                                  className="text-[10px] bg-theme-dark text-theme-light px-2 py-0.5 rounded font-bold"
+                                                  className="text-[10px] bg-theme-dark text-theme-light px-2 py-1 rounded font-bold flex items-center gap-1 hover:bg-theme-dark/80 transition-colors"
                                               >
-                                                  {settings.language === 'zh' ? '点击粘贴' : 'Tap to Paste'}
+                                                  <Lightbulb size={12} />
+                                                  {settings.language === 'zh' ? 'AI 识别文本/笔记' : 'AI Parse Text'}
                                               </button>
                                           </div>
                                       </div>
