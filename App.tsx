@@ -3117,7 +3117,7 @@ const App = () => {
   }, [history]);
 
   const generateAIReportAnalysis = async () => {
-      const effectiveApiKey = apiKey || process.env.API_KEY || process.env.GEMINI_API_KEY;
+      const effectiveApiKey = apiKey || (import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) || '';
       
       if (!effectiveApiKey && llmProvider === 'gemini') {
           showAlert(settings.language === 'zh' ? '请先在设置中配置 Gemini API Key' : 'Please configure Gemini API Key in settings');
@@ -4122,7 +4122,7 @@ const App = () => {
           if (e) e.target.value = '';
       };
       
-      const effectiveApiKey = apiKey || process.env.API_KEY || process.env.GEMINI_API_KEY;
+      const effectiveApiKey = apiKey || (import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) || '';
 
       if (!effectiveApiKey && llmProvider === 'gemini') {
           play('error');
