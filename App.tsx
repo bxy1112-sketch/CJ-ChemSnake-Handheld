@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import bgmAudio from './src/assets/bgm.mp3';
 import { GoogleGenAI, Type } from '@google/genai';
 import * as mammoth from 'mammoth';
 
@@ -466,7 +467,7 @@ const CHAPTER_ORDER =[
 ];
 
 const AUDIO_PATHS = {
-  bgm: './bgm.mp3',
+  bgm: bgmAudio,
 };
 
 const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
