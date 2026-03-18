@@ -400,6 +400,7 @@ interface GameSettings {
   joyDeadzone: number;
   joySensitivity: number;
   reportEmail?: string;
+  customBgmUrl?: string;
 }
 
 // 增加自定义导入数据结构
@@ -465,7 +466,7 @@ const CHAPTER_ORDER =[
 ];
 
 const AUDIO_PATHS = {
-  bgm: './bgm.mp3',
+  bgm: 'https://raw.githubusercontent.com/bxy1112-sketch/CJ-ChemSnake-Handheld/refs/heads/main/bgm.mp3',
 };
 
 const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
@@ -491,6 +492,9 @@ const getLocalizedUI = (key: string, lang: Language) => {
     TIME_DURATION: {zh: '限时时长', en: 'DURATION'},
     REPORT_EMAIL: {zh: '报告邮箱', en: 'REPORT EMAIL'},
     REPORT_EMAIL_PROMPT: {zh: '请输入接收报告的邮箱地址：', en: 'Enter email address for reports:'},
+    CUSTOM_BGM: {zh: '自定义BGM', en: 'CUSTOM BGM'},
+    CUSTOM_BGM_PROMPT: {zh: '请输入自定义BGM的URL地址 (留空使用默认)：', en: 'Enter custom BGM URL (leave empty for default):'},
+    DEFAULT: {zh: '默认', en: 'DEFAULT'},
     MUSIC: {zh: '音乐', en: 'MUSIC'},
     VIBE: {zh: '震动', en: 'VIBE'},
     LANG: {zh: '语言', en: 'LANGUAGE'},
@@ -1083,7 +1087,7 @@ const App = () => {
   const [settings, setSettings] = useState<GameSettings>(() => {
     const defaults: GameSettings = {
         sound: true, music: true, vibration: true, difficulty: 'VERY_EASY', selectedChapters:[], language: 'zh', timeLimitMode: false, timeLimitDuration: 180,
-        joyDeadzone: 0.1, joySensitivity: 1.0, reportEmail: ''
+        joyDeadzone: 0.1, joySensitivity: 1.0, reportEmail: '', customBgmUrl: ''
     };
     try {
         const saved = localStorage.getItem('chemSnake_settings');
@@ -1262,9 +1266,12 @@ const App = () => {
     { zh: '正在优化题目难度...', en: 'Optimizing question difficulty...' },
     { zh: '正在准备实验器材...', en: 'Preparing lab equipment...' }
   ];
-  const [alertModal, setAlertModal] = useState<{ isOpen: boolean; message: string; title?: string; onConfirm?: () => void; onCancel?: () => void; cancelText?: string; confirmText?: string }>({ isOpen: false, message: '' });
+  const [alertModal, setAlertModal] = useState<{ isOpen: boolean; message: string; title?: string; onConfirm?: () => void; onCancel?: () => void; cancelText?: string; confirmText?: string; isPrompt?: boolean; promptValue?: string; onPromptConfirm?: (val: string) => void }>({ isOpen: false, message: '' });
   const showAlert = (message: string, title?: string, onConfirm?: () => void, onCancel?: () => void, cancelText?: string, confirmText?: string) => {
       setAlertModal({ isOpen: true, message, title, onConfirm, onCancel, cancelText, confirmText });
+  };
+  const showPrompt = (message: string, defaultValue: string, onConfirm: (val: string) => void, title?: string) => {
+      setAlertModal({ isOpen: true, message, title, isPrompt: true, promptValue: defaultValue, onPromptConfirm: onConfirm, onCancel: () => {} });
   };
   const [saveApiKey, setSaveApiKey] = useState(() => {
     try { return localStorage.getItem('save_api_key') === 'true'; } catch { return false; }
@@ -1560,6 +1567,20 @@ const App = () => {
   }, [gameState]);
 
   useEffect(() => {
+    const oldAudio = audioRefs.current.bgm;
+    if (oldAudio) {
+      oldAudio.pause();
+    }
+    const url = settings.customBgmUrl || AUDIO_PATHS.bgm;
+    const audio = new Audio(url);
+    audio.preload = 'auto';
+    audio.loop = true;
+    audioRefs.current.bgm = audio;
+    // We don't auto-play here to avoid closure issues, 
+    // the other useEffect will handle playback based on gameState.
+  }, [settings.customBgmUrl]);
+
+  useEffect(() => {
     const bgm = audioRefs.current.bgm;
     if (bgm) {
       if (gameState === 'PLAYING' && settings.music) {
@@ -1569,7 +1590,7 @@ const App = () => {
          bgm.pause();
       }
     }
-  }, [gameState, settings.music]);
+  }, [gameState, settings.music, settings.customBgmUrl]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -3024,7 +3045,7 @@ const App = () => {
         if (stateRef.current.gameState === 'GAMEOVER') max = 4;
         else if (stateRef.current.menuPage === 'CHAPTERS') max = stateRef.current.availableChapters.length + 1; 
         else if (stateRef.current.menuPage === 'DIFFICULTY') max = 5; 
-        else if (stateRef.current.menuPage === 'SETTINGS') max = 11;
+        else if (stateRef.current.menuPage === 'SETTINGS') max = 13;
         else if (stateRef.current.menuPage === 'ABOUT') max = 1;
         else if (stateRef.current.menuPage === 'LEADERBOARD') max = 1;
         setMenuIndex(i => (i + yDir + max) % max);
@@ -3880,13 +3901,13 @@ const App = () => {
               else if (menuPage === 'SETTINGS') setMenuIndex(6);
               else if (menuPage === 'ABOUT') {
                   setMenuPage('SETTINGS');
-                  setMenuIndex(10);
+                  setMenuIndex(11);
                   play('back');
                   return;
               }
               else if (menuPage === 'AI_SETTINGS') {
                   setMenuPage('SETTINGS');
-                  setMenuIndex(9);
+                  setMenuIndex(10);
                   play('back');
                   return;
               }
@@ -3960,8 +3981,19 @@ const App = () => {
                  setPendingAction('settings');
                  setGameState('INPUT_INFO');
              }
-             if (menuIndex === 9) { setMenuPage('AI_SETTINGS'); setMenuIndex(0); }
-             if (menuIndex === 10) { setMenuPage('ABOUT'); setMenuIndex(0); }
+             if (menuIndex === 9) {
+                 showPrompt(getLocalizedUI('CUSTOM_BGM_PROMPT', settings.language), settings.customBgmUrl || '', (val) => {
+                     setSettings(s => ({ ...s, customBgmUrl: val.trim() }));
+                 });
+             }
+             if (menuIndex === 10) { setMenuPage('AI_SETTINGS'); setMenuIndex(0); }
+             if (menuIndex === 11) { setMenuPage('ABOUT'); setMenuIndex(0); }
+             if (menuIndex === 12) {
+                 showAlert(settings.language === 'zh' ? '确定要重置所有设置吗？' : 'Reset all settings?', undefined, () => {
+                     localStorage.removeItem('chemSnake_settings');
+                     window.location.reload();
+                 }, () => {});
+             }
           }
        }
     }
@@ -4660,52 +4692,59 @@ const App = () => {
   };
 
   const handleImportText = () => {
-      const text = tempImportText || prompt('Paste JSON content here:');
-      if (text) {
-          try {
-              let parsedText = text.replace(/^```json/m, '').replace(/```$/m, '').trim();
-              const data = JSON.parse(parsedText);
-              
-              const { compounds, reactions, symmetry, subjectCategory, rxnTypes } = parseImportedData(data);
+      const processText = (text: string) => {
+          if (text) {
+              try {
+                  let parsedText = text.replace(/^```json/m, '').replace(/```$/m, '').trim();
+                  const data = JSON.parse(parsedText);
+                  
+                  const { compounds, reactions, symmetry, subjectCategory, rxnTypes } = parseImportedData(data);
 
-              if (reactions.length > 0 || symmetry.length > 0) {
-                  const customId = `CUSTOM_${Date.now()}`;
-                  const newReactions = reactions.map((r: any) => ({ ...r, chapter: customId, bankId: customId, cond: typeof r.cond === 'string' ? { zh: r.cond, en: r.cond } : (r.cond || { zh: '', en: '' }) }));
-                  const newSymmetry = symmetry.map((s: any) => ({ ...s, bankId: customId, elements: s.elements || [], wrong: s.wrong || [] }));
-                  const newImport: ImportedData = {
-                      fileName: 'pasted_data.json',
-                      customChapterId: customId,
-                      compounds: compounds,
-                      reactions: newReactions,
-                      symmetry: newSymmetry,
-                      rxnTypes: rxnTypes,
-                      importDate: Date.now(),
-                      subjectCategory: subjectCategory
-                  };
-                  setImportedDataList(prev => [...prev, newImport]);
-                  setSettings(s => ({ ...s, selectedChapters: [customId] }));
-                  stateRef.current.settings.selectedChapters = [customId];
-                  play('start');
-                  setTempImportText(''); // Clear the textarea after successful import
-                  showAlert(
-                      settings.language === 'zh' ? '导入成功！新题库已加载。是否立即开始游戏？' : 'Import successful! New question bank loaded. Start game now?',
-                      settings.language === 'zh' ? '成功' : 'Success',
-                      () => {
-                          stateRef.current.settings.selectedChapters = [customId];
-                          setPendingStart(customId);
-                      },
-                      () => setGameState('MENU'),
-                      settings.language === 'zh' ? '返回菜单' : 'Menu',
-                      settings.language === 'zh' ? '开始游戏' : 'Start'
-                  );
-              } else {
+                  if (reactions.length > 0 || symmetry.length > 0) {
+                      const customId = `CUSTOM_${Date.now()}`;
+                      const newReactions = reactions.map((r: any) => ({ ...r, chapter: customId, bankId: customId, cond: typeof r.cond === 'string' ? { zh: r.cond, en: r.cond } : (r.cond || { zh: '', en: '' }) }));
+                      const newSymmetry = symmetry.map((s: any) => ({ ...s, bankId: customId, elements: s.elements || [], wrong: s.wrong || [] }));
+                      const newImport: ImportedData = {
+                          fileName: 'pasted_data.json',
+                          customChapterId: customId,
+                          compounds: compounds,
+                          reactions: newReactions,
+                          symmetry: newSymmetry,
+                          rxnTypes: rxnTypes,
+                          importDate: Date.now(),
+                          subjectCategory: subjectCategory
+                      };
+                      setImportedDataList(prev => [...prev, newImport]);
+                      setSettings(s => ({ ...s, selectedChapters: [customId] }));
+                      stateRef.current.settings.selectedChapters = [customId];
+                      play('start');
+                      setTempImportText(''); // Clear the textarea after successful import
+                      showAlert(
+                          settings.language === 'zh' ? '导入成功！新题库已加载。是否立即开始游戏？' : 'Import successful! New question bank loaded. Start game now?',
+                          settings.language === 'zh' ? '成功' : 'Success',
+                          () => {
+                              stateRef.current.settings.selectedChapters = [customId];
+                              setPendingStart(customId);
+                          },
+                          () => setGameState('MENU'),
+                          settings.language === 'zh' ? '返回菜单' : 'Menu',
+                          settings.language === 'zh' ? '开始游戏' : 'Start'
+                      );
+                  } else {
+                      play('error');
+                      showAlert(settings.language === 'zh' ? '没有可用题目！请检查 JSON 内容。' : 'No questions available! Please check the JSON content.');
+                  }
+              } catch (err: any) {
                   play('error');
-                  showAlert(settings.language === 'zh' ? '没有可用题目！请检查 JSON 内容。' : 'No questions available! Please check the JSON content.');
+                  showAlert(`Failed to parse JSON: ${err.message}`);
               }
-          } catch (err: any) {
-              play('error');
-              showAlert(`Failed to parse JSON: ${err.message}`);
           }
+      };
+
+      if (tempImportText) {
+          processText(tempImportText);
+      } else {
+          showPrompt('Paste JSON content here:', '', (val) => processText(val));
       }
   };
 
@@ -5047,9 +5086,10 @@ const App = () => {
                                                       <MenuItem label={getLocalizedUI('DEADZONE', settings.language)} active={menuIndex===6} icon={Crosshair} type="slider" value={`${(settings.joyDeadzone ?? 0.1).toFixed(2)}`} onClick={() => handleMenuClick(6)} onFocus={() => setMenuIndex(6)} onDecrease={() => handleMenuAdjust(-1, 6)} onIncrease={() => handleMenuAdjust(1, 6)} />
                                                       <MenuItem label={getLocalizedUI('SENSITIVITY', settings.language)} active={menuIndex===7} icon={Activity} type="slider" value={`${(settings.joySensitivity ?? 1.0).toFixed(1)}`} onClick={() => handleMenuClick(7)} onFocus={() => setMenuIndex(7)} onDecrease={() => handleMenuAdjust(-1, 7)} onIncrease={() => handleMenuAdjust(1, 7)} />
                                                       <MenuItem label={getLocalizedUI('REPORT_EMAIL', settings.language)} active={menuIndex===8} icon={Send} value={settings.reportEmail ? (settings.reportEmail.length > 10 ? settings.reportEmail.substring(0, 8) + '...' : settings.reportEmail) : getLocalizedUI('UNSET_EMAIL', settings.language)} onClick={() => handleMenuClick(8)} onFocus={() => setMenuIndex(8)} />
-                                                      <MenuItem label={settings.language === 'zh' ? 'AI 设置' : 'AI SETTINGS'} active={menuIndex===9} icon={Cpu} onClick={() => handleMenuClick(9)} onFocus={() => setMenuIndex(9)} />
-                                                      <MenuItem label={getLocalizedUI('ABOUT', settings.language)} active={menuIndex===10} icon={Lightbulb} onClick={() => handleMenuClick(10)} onFocus={() => setMenuIndex(10)} />
-                                                      <MenuItem label={settings.language === 'zh' ? '重置设置' : 'RESET SETTINGS'} active={menuIndex===11} icon={RotateCcw} onClick={() => handleMenuClick(11)} onFocus={() => setMenuIndex(11)} />
+                                                      <MenuItem label={getLocalizedUI('CUSTOM_BGM', settings.language)} active={menuIndex===9} icon={Music} value={settings.customBgmUrl ? (settings.customBgmUrl.length > 10 ? settings.customBgmUrl.substring(0, 8) + '...' : settings.customBgmUrl) : getLocalizedUI('DEFAULT', settings.language)} onClick={() => handleMenuClick(9)} onFocus={() => setMenuIndex(9)} />
+                                                      <MenuItem label={settings.language === 'zh' ? 'AI 设置' : 'AI SETTINGS'} active={menuIndex===10} icon={Cpu} onClick={() => handleMenuClick(10)} onFocus={() => setMenuIndex(10)} />
+                                                      <MenuItem label={getLocalizedUI('ABOUT', settings.language)} active={menuIndex===11} icon={Lightbulb} onClick={() => handleMenuClick(11)} onFocus={() => setMenuIndex(11)} />
+                                                      <MenuItem label={settings.language === 'zh' ? '重置设置' : 'RESET SETTINGS'} active={menuIndex===12} icon={RotateCcw} onClick={() => handleMenuClick(12)} onFocus={() => setMenuIndex(12)} />
                                                       <div className="text-[10px] text-center opacity-50 mt-2 font-led w-full">
                                                           {settings.language === 'zh' ? '设置已自动保存' : 'Settings auto-saved'}
                                                       </div>
@@ -5327,8 +5367,9 @@ const App = () => {
                                               <label className="text-xs font-bold opacity-80">{settings.language === 'zh' ? '或手动粘贴 JSON 题库代码：' : 'Or Paste JSON Code:'}</label>
                                               <button 
                                                   onClick={() => {
-                                                      const text = prompt(settings.language === 'zh' ? '请输入化学相关文本、笔记或反应方程式：' : 'Please enter chemistry text, notes, or equations:');
-                                                      if (text) handleAIImport(undefined, text);
+                                                      showPrompt(settings.language === 'zh' ? '请输入化学相关文本、笔记或反应方程式：' : 'Please enter chemistry text, notes, or equations:', '', (val) => {
+                                                          if (val) handleAIImport(undefined, val);
+                                                      });
                                                   }}
                                                   className="text-[10px] bg-theme-dark text-theme-light px-2 py-1 rounded font-bold flex items-center gap-1 hover:bg-theme-dark/80 transition-colors"
                                               >
@@ -5665,6 +5706,15 @@ const App = () => {
                       <div className="text-sm sm:text-base font-bold whitespace-pre-wrap text-center leading-relaxed">
                           {alertModal.message}
                       </div>
+                      {alertModal.isPrompt && (
+                          <input 
+                              type="text" 
+                              value={alertModal.promptValue || ''} 
+                              onChange={(e) => setAlertModal(prev => ({ ...prev, promptValue: e.target.value }))} 
+                              className="w-full bg-theme-dark/10 border-2 border-theme-dark rounded p-2 sm:p-3 focus:bg-theme-dark/20 outline-none font-bold text-lg sm:text-xl tracking-wider transition-colors shadow-inner" 
+                              autoFocus
+                          />
+                      )}
                       <div className={`flex gap-2 sm:gap-3 mt-2 ${alertModal.onCancel ? 'flex-row' : 'flex-col'}`}>
                           {alertModal.onCancel && (
                               <button 
@@ -5681,7 +5731,11 @@ const App = () => {
                               className="flex-1 bg-theme-dark text-theme-light py-2 sm:py-3 rounded font-bold text-base sm:text-lg active:scale-95 transition-transform shadow-lg" 
                               onClick={() => {
                                   setAlertModal({ isOpen: false, message: '' });
-                                  if (alertModal.onConfirm) alertModal.onConfirm();
+                                  if (alertModal.isPrompt && alertModal.onPromptConfirm) {
+                                      alertModal.onPromptConfirm(alertModal.promptValue || '');
+                                  } else if (alertModal.onConfirm) {
+                                      alertModal.onConfirm();
+                                  }
                               }}
                           >
                               {alertModal.confirmText || getLocalizedUI('BTN_OK', settings.language)}
