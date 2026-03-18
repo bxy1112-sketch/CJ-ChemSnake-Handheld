@@ -466,11 +466,26 @@ const CHAPTER_ORDER =[
 ];
 
 const AUDIO_PATHS = {
-  bgm: 'https://raw.githubusercontent.com/bxy1112-sketch/CJ-ChemSnake-Handheld/refs/heads/main/bgm.mp3',
+  bgm: './bgm.mp3',
 };
 
 const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
 let audioCtx: AudioContext | null = null;
+
+const shouldShowControlsInitially = () => {
+    const isLargeScreen = window.innerWidth >= 768;
+    const hasTouch = (('ontouchstart' in window) ||
+        (navigator.maxTouchPoints > 0) ||
+        ((navigator as any).msMaxTouchPoints > 0));
+    
+    // 多层校验：首先必须是大屏，其次没有触摸屏（推断为有键盘的PC）
+    if (isLargeScreen) {
+        if (!hasTouch) {
+            return false; // 隐藏虚拟按键
+        }
+    }
+    return true; // 默认显示虚拟按键
+};
 
 const getLocalizedUI = (key: string, lang: Language) => {
   const dict: Record<string, {zh: string, en: string}> = {
@@ -1298,7 +1313,7 @@ const App = () => {
   const [customModel, setCustomModel] = useState(() => {
     try { return localStorage.getItem('custom_model') || ''; } catch { return ''; }
   });
-  const [showControls, setShowControls] = useState(true);
+  const [showControls, setShowControls] = useState(() => shouldShowControlsInitially());
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -2208,7 +2223,7 @@ const App = () => {
     state.isTutorial = tutorial;
     state.isVersus = versus;
     
-    setShowControls(!versus);
+    setShowControls(versus ? false : shouldShowControlsInitially());
     setTutorialStep(0);
     tutorialTimerRef.current = 0;
     setAiReportAnalysis(null);
@@ -4321,11 +4336,16 @@ const App = () => {
           - If you CANNOT deduce the actual chemical identity of a placeholder letter, DO NOT include that reaction in your output.
 
           =========================================================
-          DEEP CHEMICAL UNDERSTANDING (理解化学本质)
+          DEEP CHEMICAL UNDERSTANDING & SUB-DISCIPLINE TARGETING (化学本质与二级学科针对性)
           =========================================================
-          Do not just copy-paste text from the image. Extract the ESSENCE of the chemical transformation.
-          - Instead of matching arbitrary text, test the player's understanding of *why* a reaction happens or *what* the core change is.
-          - For complex multi-step syntheses, extract the key functional group transformations, named reactions, or critical intermediates.
+          Do not just copy-paste text from the image. Extract the ESSENCE of the chemical transformation and categorize it accurately into its sub-discipline.
+          - INORGANIC CHEMISTRY: Focus on coordination chemistry, crystal field theory, descriptive chemistry of main group/transition elements, redox potentials, and industrial processes.
+          - ORGANIC CHEMISTRY: Focus on reaction mechanisms (SN1/SN2/E1/E2), stereochemistry, named reactions, retrosynthetic analysis, and functional group transformations.
+          - PHYSICAL CHEMISTRY: Focus on thermodynamics (enthalpy, entropy, Gibbs free energy), kinetics (rate laws, mechanisms), quantum chemistry (orbitals, operators), and statistical mechanics.
+          - ANALYTICAL CHEMISTRY: Focus on instrumental analysis (NMR, IR, MS, UV-Vis), chromatography, electroanalytical methods, and complex acid-base/redox titrations.
+          - STRUCTURAL CHEMISTRY: Focus on point groups, symmetry elements, crystal structures (Bravais lattices), and molecular orbital theory.
+          
+          You MUST adapt your questions to the specific scientific rigor of the identified sub-discipline.
           
           EXAMPLES OF BAD VS GOOD PAIRS:
           - BAD: from: "A", to: "B", cond: "H+" (Meaningless placeholders)
@@ -4336,16 +4356,16 @@ const App = () => {
           =========================================================
           DIFFICULTY, COMPLEXITY & VARIETY (难度、深度与多样性)
           =========================================================
-          - DO NOT generate trivial or basic questions (e.g., "Water -> H2O" or "Na + Cl -> NaCl").
+          - DO NOT generate trivial or basic questions (e.g., "Water -> H₂O" or "Na + Cl -> NaCl").
           - Generate ADVANCED, challenging questions suitable for university-level chemistry or chemistry olympiads.
           - Focus on: tricky exceptions, complex mechanisms, regioselectivity (Markovnikov/anti-Markovnikov, Zaitsev/Hofmann), stereochemistry (R/S, E/Z, syn/anti addition), advanced reagents (e.g., DIBAL-H, PCC, Grignard, Wittig), and critical intermediates.
           - If the source material is simple, ELEVATE the difficulty by asking about the underlying mechanism, the catalyst's role, or a related advanced concept.
           - AVOID REPETITION: Do not generate multiple questions testing the exact same concept or reaction. Ensure a diverse set of questions.
 
           =========================================================
-          SCENARIO-SPECIFIC EXTRACTION STRATEGIES (场景化出题策略)
+          SCENARIO-SPECIFIC EXTRACTION STRATEGIES (复杂场景与题型适配)
           =========================================================
-          You must adapt your extraction strategy based on the visual or textual content. Do not just blindly copy text; understand the SCENARIO and generate targeted questions:
+          You must adapt your extraction strategy based on the visual or textual content. Discriminate between different input types (text, images, complex diagrams) and generate targeted questions:
           
           1. MULTI-STEP SYNTHESIS FLOWCHARTS (多步合成路线):
           - Do NOT just extract the final product. Extract EACH logical step as a separate reaction.
@@ -4461,16 +4481,19 @@ const App = () => {
              - "en": { "name": "English Name" }
           
           =========================================================
-          FORMATTING & OUTPUT RULES
+          FORMATTING & OUTPUT RULES (CRITICAL)
           =========================================================
           1. CONCISENESS IS KING: Keep "formula", "from", "to", and "cond" extremely short! Mobile screens are small. 
           2. USE CHEMICAL FORMULAS: The \`formula\` field MUST be a chemical formula or structural formula (e.g. C₆H₅Br, PhOH), NEVER a long text name. The \`zh\` and \`en\` fields will contain the full names.
-          3. PROPER UNICODE: Chemical formulas MUST use proper Unicode subscripts/superscripts (e.g., H₂O, SO₄²⁻, NH₄⁺, C₆H₁₂O₆, ΔH).
-          4. DICTIONARY MATCHING: EVERY 'from' and 'to' value in 'reactions' MUST exactly match a key in the 'compounds' dictionary.
-          5. BILINGUAL: BOTH 'zh' and 'en' names MUST be provided for every compound and condition.
-          6. STRICT LANGUAGE ENFORCEMENT (严格语言控制): For any text fields (like names in 'compounds' or conditions in 'cond'), you MUST provide BOTH 'zh' (Chinese) and 'en' (English) translations. DO NOT mix English and Chinese within the same string. 
+          3. STRICT SUBSCRIPTS & SUPERSCRIPTS (严格角标规范): You MUST use proper Unicode subscripts/superscripts for ALL chemical formulas (e.g., H₂O, SO₄²⁻, NH₄⁺, C₆H₁₂O₆, ΔH). NEVER output "H2O" or "SO42-". Pay extreme attention to this when parsing images or text.
+          4. ELEMENT SYMBOL ACCURACY (元素符号甄别): Carefully distinguish between similar-looking symbols (e.g., "Co" Cobalt vs "CO" Carbon Monoxide, "Os" Osmium vs "O S" Oxygen Sulfur).
+          5. DICTIONARY MATCHING: EVERY 'from' and 'to' value in 'reactions' MUST exactly match a key in the 'compounds' dictionary.
+          6. STRICT LANGUAGE ENFORCEMENT (绝对禁止中英文混杂): 
+             - The \`zh\` field MUST contain PURE Chinese (except for universal chemical formulas/symbols). DO NOT include English translations or explanations in the \`zh\` field.
+             - The \`en\` field MUST contain PURE English. DO NOT include Chinese characters or Pinyin in the \`en\` field.
+             - This applies to ALL text fields: compound names, conditions, reaction types, and thought processes.
           7. REACTION TYPES: If you use a "type" that is NOT standard (like "Substitution", "Addition", "Elimination", "Oxidation", "Reduction", "Acid-Base", "Precipitation", "Complexation", "Thermodynamics", "Kinetics", "Electrochemistry", "Quantum", "Spectroscopy", "Chromatography", "Titration", "Symmetry", "Bonding", "Crystal"), you MUST define it in a new "rxnTypes" dictionary in the root of the JSON.
-              - "rxnTypes": { "CustomTypeKey": { "zh": "Chinese Name", "en": "English Name" } }
+              - "rxnTypes": { "CustomTypeKey": { "zh": "纯中文名称", "en": "Pure English Name" } }
           8. Output ONLY valid JSON. Do not wrap in markdown code blocks (\`\`\`json). Start directly with { and end with }.
 
           Return a JSON object with keys: "_thought_process", "compounds", "reactions", "symmetry", "rxnTypes" (optional), and "subjectCategory" (e.g., "ORGANIC", "INORGANIC", "PHYSICAL", "ANALYTICAL", or "STRUCTURAL").
@@ -4988,6 +5011,12 @@ const App = () => {
                            
                            {flash && <div className="absolute inset-0 pointer-events-none z-10" style={{backgroundColor: flash.color, opacity: flash.opacity}}></div>}
                             
+                           {!showControls && gameState !== 'MENU' && (
+                               <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center text-[10px] sm:text-xs opacity-70 pointer-events-none z-30 font-led bg-theme-dark/80 text-theme-light backdrop-blur-sm py-1 px-3 rounded-full shadow-lg whitespace-nowrap">
+                                   {settings.language === 'zh' ? 'WASD/方向键: 移动 | J/K: 确认/返回 | 空格: 开始/暂停 | C: 显示按键' : 'WASD/Arrows: Move | J/K: A/B | Space: Start/Pause | C: Toggle UI'}
+                               </div>
+                           )}
+
                             {gameState === 'PAUSED' && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-theme-light/90 z-30 font-led text-theme-dark">
                                     <div className="text-4xl font-pixel tracking-widest mb-8 animate-pulse">PAUSED</div>
@@ -5046,6 +5075,11 @@ const App = () => {
                                                   <MenuItem key={item.id} label={item.label} active={menuIndex === idx} icon={item.icon} value={item.value as any} onClick={() => handleMenuClick(idx)} onFocus={() => setMenuIndex(idx)} />
                                               ))}
                                           </div>
+                                          {!showControls && (
+                                              <div className="absolute bottom-2 left-0 right-0 text-center text-[10px] sm:text-xs opacity-60 animate-pulse pointer-events-none px-2 whitespace-pre-line leading-tight">
+                                                  {settings.language === 'zh' ? '检测到键盘/手柄。按 C 键或手柄 R3 显示虚拟按键\nWASD/方向键: 移动 | J/K: 确认/返回 | 空格: 开始/暂停' : 'Keyboard/Gamepad detected. Press C or R3 to show virtual controls\nWASD/Arrows: Move | J/K: A/B | Space: Start/Pause'}
+                                              </div>
+                                          )}
                                       </>
                                    )}
                                    {menuPage !== 'MAIN' && (
