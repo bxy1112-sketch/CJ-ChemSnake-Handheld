@@ -1,0 +1,34 @@
+1264:  const themeColors = getThemeColors(currentChapter, importedDataList);
+1267:    document.documentElement.style.setProperty('--theme-light', themeColors.light);
+1268:    document.documentElement.style.setProperty('--theme-dark', themeColors.dark);
+1271:      metaThemeColor.setAttribute('content', themeColors.lightHex);
+1273:  }, [themeColors]);
+1670:                 color: themeColors.darkHex,
+2871:                                    { id: Date.now() + (isPlayer2 ? 100 : 0), x: foodItem.x, y: foodItem.y, text: `+${floatGain}`, color: isPlayer2 ? '#306230' : themeColors.darkHex, life: 60, fontSize: 16 },
+2872:                                    { id: Date.now() + 1 + (isPlayer2 ? 100 : 0), x: foodItem.x, y: foodItem.y - 1, text: state.settings.language === 'zh' ? '对称元素' : 'Symmetry', color: isPlayer2 ? '#306230' : themeColors.darkHex, life: 80, fontSize: 12 }
+2883:                                if (!isPlayer2) { setShake(20); setFlash({color: themeColors.darkHex, opacity: 0.5}); }
+2978:                                spawnParticles(foodItem.x, foodItem.y, isPlayer2 ? '#306230' : themeColors.darkHex, 12);
+2984:                                    { id: Date.now() + (isPlayer2 ? 100 : 0), x: foodItem.x, y: foodItem.y, text: `+${gain}`, color: isPlayer2 ? '#306230' : themeColors.darkHex, life: 60, fontSize: 16 },
+2985:                                    { id: Date.now() + 1 + (isPlayer2 ? 100 : 0), x: foodItem.x, y: foodItem.y - 1, text: state.settings.language === 'zh' ? (state.dbRxnTypes[rxn.type]?.zh || rxn.type) : (state.dbRxnTypes[rxn.type]?.en || rxn.type), color: isPlayer2 ? '#306230' : themeColors.darkHex, life: 80, fontSize: 12 }
+3020:                                if (!isPlayer2) { setShake(20); setFlash({color: themeColors.darkHex, opacity: 0.5}); }
+3049:                                        { id: Date.now()+1 + (isPlayer2 ? 100 : 0), x: foodItem.x, y: foodItem.y - 1, text: state.settings.language === 'zh' ? '错误' : 'WRONG', color: themeColors.darkHex, life: 40, fontSize: 14 }
+3125:                 spawnParticles(segment.x, segment.y, themeColors.darkHex, 12);
+3135:    setFlash({color: win ? '#ffffff' : themeColors.lightHex, opacity: 0.8});
+3513:    bgGrad.addColorStop(0, themeColors.lightHex);
+3514:    bgGrad.addColorStop(1, themeColors.lightHex);
+3538:            ctx.fillStyle = themeColors.darkHex; 
+3540:            ctx.shadowColor = `rgba(${themeColors.dark.replace(/ /g, ', ')}, 0.4)`;
+3563:                ctx.fillStyle = themeColors.lightHex;
+3614:                ctx.fillStyle = themeColors.lightHex;
+3621:                ctx.fillStyle = themeColors.lightHex;
+3723:      ctx.strokeStyle = themeColors.darkHex;
+3725:      ctx.fillStyle = `rgba(${themeColors.dark.replace(/ /g, ', ')}, 0.2)`; 
+3733:      ctx.fillStyle = themeColors.darkHex; 
+3734:      ctx.strokeStyle = themeColors.lightHex; 
+3736:      ctx.shadowColor = `rgba(${themeColors.dark.replace(/ /g, ', ')}, 0.4)`;
+3744:      ctx.fillStyle = themeColors.lightHex;
+3766:       ctx.strokeStyle = themeColors.lightHex; 
+4823:  const currentBgColor = themeColors.lightHex;
+4824:  const currentTextColor = themeColors.darkHex;
+5066:                                               <div style={{backgroundColor: gameMode === 'cond' ? themeColors.darkHex : currentTextColor, color: gameMode === 'cond' ? themeColors.lightHex : currentBgColor}} className={`text-sm text-center whitespace-nowrap border px-2 py-0.5 rounded z-10 font-led shadow-sm mb-1.5 transition-all ${gameMode === 'cond' ? 'animate-pulse ring-2 ring-theme-light shadow-lg scale-110' : ''}`}>
+5074:                                               <div style={{backgroundColor: gameMode === 'type' ? themeColors.darkHex : 'transparent', color: gameMode === 'type' ? themeColors.lightHex : currentTextColor}} className={`text-[10px] text-center whitespace-nowrap px-1 py-0.5 rounded z-10 font-bold mt-1 transition-all ${gameMode === 'type' ? 'animate-pulse ring-1 ring-theme-light shadow-sm scale-110' : 'opacity-70'}`}>

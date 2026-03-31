@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import bgmAudio from './src/assets/bgm.mp3';
 import { GoogleGenAI, Type } from '@google/genai';
 import * as mammoth from 'mammoth';
 
@@ -124,29 +123,29 @@ export const COMPOUNDS_CORE: Record<string, Compound> = {
   "H2Os":{formula:"H₂O(s)",zh:{name:"冰"},en:{name:"Ice (s)"}},
   "I2s":{formula:"I₂(s)",zh:{name:"碘单质(固)"},en:{name:"Iodine (s)"}},
   "I2g":{formula:"I₂(g)",zh:{name:"碘蒸气"},en:{name:"Iodine (g)"}},
-  "C_diam":{formula:"C(金刚石)",zh:{name:"金刚石"},en:{name:"Diamond"}},
-  "C_graph":{formula:"C(石墨)",zh:{name:"石墨"},en:{name:"Graphite"}},
+  "C_diam":{formula:"C(diamond)",zh:{name:"金刚石"},en:{name:"Diamond"}},
+  "C_graph":{formula:"C(graphite)",zh:{name:"石墨"},en:{name:"Graphite"}},
   "O3":{formula:"O₃",zh:{name:"臭氧"},en:{name:"Ozone"}},
-  "H2_I2":{formula:"H₂ + I₂",zh:{name:"氢碘混合气"},en:{name:"H2 + I2"}},
+  "H2_I2":{formula:"H₂ + I₂",zh:{name:"氢碘混合气"},en:{name:"H₂ + I₂"}},
   "HI":{formula:"HI",zh:{name:"碘化氢"},en:{name:"Hydrogen Iodide"}},
   "N2O4":{formula:"N₂O₄",zh:{name:"四氧化二氮"},en:{name:"Dinitrogen Tetroxide"}},
-  "H2_O2":{formula:"H₂ + O₂",zh:{name:"氢氧混合气"},en:{name:"H2 + O2"}},
-  "CH4_O2":{formula:"CH₄ + O₂",zh:{name:"甲烷氧气混合"},en:{name:"CH4 + O2"}},
+  "H2_O2":{formula:"H₂ + O₂",zh:{name:"氢氧混合气"},en:{name:"H₂ + O₂"}},
+  "CH4_O2":{formula:"CH₄ + O₂",zh:{name:"甲烷氧气混合"},en:{name:"CH₄ + O₂"}},
   "ATP":{formula:"ATP",zh:{name:"三磷酸腺苷"},en:{name:"ATP"}},
   "ADP":{formula:"ADP",zh:{name:"二磷酸腺苷"},en:{name:"ADP"}},
   "Glucose":{formula:"C₆H₁₂O₆",zh:{name:"葡萄糖"},en:{name:"Glucose"}},
   "Pyruvate":{formula:"C₃H₄O₃",zh:{name:"丙酮酸"},en:{name:"Pyruvate"}},
-  "CO_H2O":{formula:"CO + H₂O",zh:{name:"一氧化碳水蒸气"},en:{name:"CO + H2O"}},
-  "CO2_H2":{formula:"CO₂ + H₂",zh:{name:"二氧化碳氢气"},en:{name:"CO2 + H2"}},
-  "C_H2O":{formula:"C + H₂O",zh:{name:"碳水蒸气"},en:{name:"C + H2O"}},
+  "CO_H2O":{formula:"CO + H₂O",zh:{name:"一氧化碳水蒸气"},en:{name:"CO + H₂O"}},
+  "CO2_H2":{formula:"CO₂ + H₂",zh:{name:"二氧化碳氢气"},en:{name:"CO₂ + H₂"}},
+  "C_H2O":{formula:"C + H₂O",zh:{name:"碳水蒸气"},en:{name:"C + H₂O"}},
   "CO_H2":{formula:"CO + H₂",zh:{name:"水煤气"},en:{name:"Water Gas"}},
   "KClO3":{formula:"KClO₃",zh:{name:"氯酸钾"},en:{name:"Potassium Chlorate"}},
   "KCl":{formula:"KCl",zh:{name:"氯化钾"},en:{name:"Potassium Chloride"}},
   "N2O":{formula:"N₂O",zh:{name:"一氧化二氮"},en:{name:"Nitrous Oxide"}},
-  "NO_O3":{formula:"NO + O₃",zh:{name:"一氧化氮臭氧"},en:{name:"NO + O3"}},
-  "NO2_O2":{formula:"NO₂ + O₂",zh:{name:"二氧化氮氧气"},en:{name:"NO2 + O2"}},
-  "Cl_O3":{formula:"Cl + O₃",zh:{name:"氯原子臭氧"},en:{name:"Cl + O3"}},
-  "ClO_O2":{formula:"ClO + O₂",zh:{name:"一氧化氯氧气"},en:{name:"ClO + O2"}},
+  "NO_O3":{formula:"NO + O₃",zh:{name:"一氧化氮臭氧"},en:{name:"NO + O₃"}},
+  "NO2_O2":{formula:"NO₂ + O₂",zh:{name:"二氧化氮氧气"},en:{name:"NO₂ + O₂"}},
+  "Cl_O3":{formula:"Cl + O₃",zh:{name:"氯原子臭氧"},en:{name:"Cl + O₃"}},
+  "ClO_O2":{formula:"ClO + O₂",zh:{name:"一氧化氯氧气"},en:{name:"ClO + O₂"}},
   "H_H":{formula:"H + H",zh:{name:"氢原子对"},en:{name:"H + H"}},
   "U235":{formula:"²³⁵U",zh:{name:"铀-235"},en:{name:"Uranium-235"}},
   "Ba_Kr":{formula:"Ba + Kr",zh:{name:"钡氪裂变产物"},en:{name:"Ba + Kr"}},
@@ -158,7 +157,7 @@ export const COMPOUNDS_CORE: Record<string, Compound> = {
   "Toluene":{formula:"C₆H₅CH₃",zh:{name:"甲苯"},en:{name:"Toluene"}},
   "Styrene":{formula:"C₆H₅CH=CH₂",zh:{name:"苯乙烯"},en:{name:"Styrene"}},
   "Cyclohexane":{formula:"C₆H₁₂",zh:{name:"环己烷"},en:{name:"Cyclohexane"}},
-  "13Butadiene":{formula:"C₄H₆",zh:{name:"1,3-丁二烯"},en:{name:"1,3-Butadiene"}},
+  "13Butadiene":{formula:"CH₂=CH-CH=CH₂",zh:{name:"1,3-丁二烯"},en:{name:"1,3-Butadiene"}},
   "CH3Cl":{formula:"CH₃Cl",zh:{name:"一氯甲烷"},en:{name:"Chloromethane"}},
   "C2H5Cl":{formula:"CH₃CH₂Cl",zh:{name:"氯乙烷"},en:{name:"Chloroethane"}},
   "C2H5Br":{formula:"CH₃CH₂Br",zh:{name:"溴乙烷"},en:{name:"Bromoethane"}},
@@ -168,7 +167,7 @@ export const COMPOUNDS_CORE: Record<string, Compound> = {
   "EtOH":{formula:"C₂H₅OH",zh:{name:"乙醇"},en:{name:"Ethanol"}},
   "Glycol":{formula:"HOCH₂CH₂OH",zh:{name:"乙二醇"},en:{name:"Ethylene Glycol"}},
   "Phenol":{formula:"C₆H₅OH",zh:{name:"苯酚"},en:{name:"Phenol"}},
-  "TribromoPh":{formula:"C₆H₂Br₃OH",zh:{name:"三溴苯酚"},en:{name:"Tribromophenol"}},
+  "TribromoPh":{formula:"C₆H₂Br₃OH",zh:{name:"2,4,6-三溴苯酚"},en:{name:"2,4,6-Tribromophenol"}},
   "NaPhenolate":{formula:"C₆H₅ONa",zh:{name:"苯酚钠"},en:{name:"Sodium Phenoxide"}},
   "HCHO":{formula:"HCHO",zh:{name:"甲醛"},en:{name:"Methanal"}},
   "CH3CHO":{formula:"CH₃CHO",zh:{name:"乙醛"},en:{name:"Ethanal"}},
@@ -181,22 +180,22 @@ export const COMPOUNDS_CORE: Record<string, Compound> = {
   "OxalicAcid":{formula:"HOOC-COOH",zh:{name:"乙二酸"},en:{name:"Oxalic Acid"}},
   "BzOH":{formula:"C₆H₅COOH",zh:{name:"苯甲酸"},en:{name:"Benzoic Acid"}},
   "EtOAc":{formula:"CH₃COOC₂H₅",zh:{name:"乙酸乙酯"},en:{name:"Ethyl Acetate"}},
-  "MeMethacrylate":{formula:"C₅H₈O₂",zh:{name:"MMA"},en:{name:"MMA"}},
-  "SalicylicAcid":{formula:"C₇H₆O₃",zh:{name:"水杨酸"},en:{name:"Salicylic Acid"}},
-  "Aspirin":{formula:"C₉H₈O₄",zh:{name:"阿司匹林"},en:{name:"Aspirin"}},
+  "MeMethacrylate":{formula:"CH₂=C(CH₃)COOCH₃",zh:{name:"甲基丙烯酸甲酯"},en:{name:"Methyl Methacrylate"}},
+  "SalicylicAcid":{formula:"C₆H₄(OH)(COOH)",zh:{name:"水杨酸"},en:{name:"Salicylic Acid"}},
+  "Aspirin":{formula:"C₆H₄(OCOCH₃)(COOH)",zh:{name:"阿司匹林"},en:{name:"Aspirin"}},
   "NitroBz":{formula:"C₆H₅NO₂",zh:{name:"硝基苯"},en:{name:"Nitrobenzene"}},
   "Aniline":{formula:"C₆H₅NH₂",zh:{name:"苯胺"},en:{name:"Aniline"}},
-  "Acetanilide":{formula:"C₈H₉NO",zh:{name:"乙酰苯胺"},en:{name:"Acetanilide"}},
-  "TNT":{formula:"TNT",zh:{name:"TNT"},en:{name:"TNT"}},
-  "TribromoAniline":{formula:"C₆H₂Br₃NH₂",zh:{name:"三溴苯胺"},en:{name:"Tribromoaniline"}},
-  "PE":{formula:"[CH₂-CH₂]n",zh:{name:"聚乙烯"},en:{name:"PE"}},
-  "PVC":{formula:"[CH₂-CHCl]n",zh:{name:"聚氯乙烯"},en:{name:"PVC"}},
-  "PS":{formula:"[CH₂-CHPh]n",zh:{name:"聚苯乙烯"},en:{name:"PS"}},
-  "PMMA":{formula:"[PMMA]n",zh:{name:"有机玻璃"},en:{name:"PMMA"}},
-  "PhenolicResin":{formula:"Resin",zh:{name:"酚醛树脂"},en:{name:"Phenolic Resin"}},
-  "PET":{formula:"PET",zh:{name:"PET酯"},en:{name:"PET"}},
-  "Rubber":{formula:"[Rubber]n",zh:{name:"顺丁橡胶"},en:{name:"Rubber"}},
-  "CO2":{formula:"CO₂",zh:{name:"二氧化碳"},en:{name:"CO2"}},
+  "Acetanilide":{formula:"C₆H₅NHCOCH₃",zh:{name:"乙酰苯胺"},en:{name:"Acetanilide"}},
+  "TNT":{formula:"C₆H₂(NO₂)₃CH₃",zh:{name:"2,4,6-三硝基甲苯(TNT)"},en:{name:"2,4,6-Trinitrotoluene (TNT)"}},
+  "TribromoAniline":{formula:"C₆H₂Br₃NH₂",zh:{name:"2,4,6-三溴苯胺"},en:{name:"2,4,6-Tribromoaniline"}},
+  "PE":{formula:"-[CH₂-CH₂]ₙ-",zh:{name:"聚乙烯"},en:{name:"Polyethylene (PE)"}},
+  "PVC":{formula:"-[CH₂-CHCl]ₙ-",zh:{name:"聚氯乙烯"},en:{name:"Polyvinyl Chloride (PVC)"}},
+  "PS":{formula:"-[CH₂-CH(C₆H₅)]ₙ-",zh:{name:"聚苯乙烯"},en:{name:"Polystyrene (PS)"}},
+  "PMMA":{formula:"-[CH₂-C(CH₃)(COOCH₃)]ₙ-",zh:{name:"聚甲基丙烯酸甲酯"},en:{name:"PMMA"}},
+  "PhenolicResin":{formula:"-[C₆H₃(OH)-CH₂]ₙ-",zh:{name:"酚醛树脂"},en:{name:"Phenolic Resin"}},
+  "PET":{formula:"-[OCC₆H₄COOCH₂CH₂O]ₙ-",zh:{name:"聚对苯二甲酸乙二醇酯"},en:{name:"PET"}},
+  "Rubber":{formula:"-[CH₂-CH=CH-CH₂]ₙ-",zh:{name:"顺丁橡胶"},en:{name:"Polybutadiene Rubber"}},
+  "CO2":{formula:"CO₂",zh:{name:"二氧化碳"},en:{name:"Carbon Dioxide"}},
   "H2O":{formula:"H₂O",zh:{name:"水"},en:{name:"Water"}},
 };
 
@@ -264,8 +263,8 @@ export const REACTIONS_CORE: Reaction[] =[
   {chapter:"hydrocarbon",from:"CH4",to:"CH3Cl",type:"Substitution",cond:{zh:"Cl₂, 光照",en:"Cl₂, Light"}},
   {chapter:"hydrocarbon",from:"C2H4",to:"C2H6",type:"Addition",cond:{zh:"H₂, Ni, 加热",en:"H₂, Ni, Heat"}},
   {chapter:"hydrocarbon",from:"C2H4",to:"12Dibromo",type:"Addition",cond:{zh:"Br₂ (CCl₄)",en:"Br₂ (CCl₄)"}},
-  {chapter:"hydrocarbon",from:"C2H4",to:"PE",type:"Polymerisation",cond:{zh:"催化剂, 高温高压",en:"Cat., High P"}},
-  {chapter:"hydrocarbon",from:"C2H2",to:"C2H4",type:"Addition",cond:{zh:"H₂, 催化剂(控制)",en:"H₂, Cat(ctrl)"}},
+  {chapter:"hydrocarbon",from:"C2H4",to:"PE",type:"Polymerisation",cond:{zh:"催化剂, 高温高压",en:"Cat., High P, Heat"}},
+  {chapter:"hydrocarbon",from:"C2H2",to:"C2H4",type:"Addition",cond:{zh:"H₂, 林德拉催化剂",en:"H₂, Lindlar Cat."}},
   {chapter:"hydrocarbon",from:"Bz",to:"Cyclohexane",type:"Addition",cond:{zh:"3H₂, Ni, 加热",en:"3H₂, Ni, Heat"}},
   {chapter:"hydrocarbon",from:"Bz",to:"BzBr",type:"Substitution",cond:{zh:"液溴, FeBr₃",en:"Liq. Br₂, FeBr₃"}},
   {chapter:"halogen",from:"C2H4",to:"C2H5Br",type:"Addition",cond:{zh:"HBr",en:"HBr"}},
@@ -273,38 +272,38 @@ export const REACTIONS_CORE: Reaction[] =[
   {chapter:"halogen",from:"C2H5Br",to:"C2H4",type:"Elimination",cond:{zh:"NaOH 醇溶液, 加热",en:"NaOH(alc), Heat"}},
   {chapter:"halogen",from:"12Dibromo",to:"Glycol",type:"Substitution",cond:{zh:"NaOH 水溶液, 加热",en:"NaOH(aq), Heat"}},
   {chapter:"halogen",from:"12Dibromo",to:"C2H2",type:"Elimination",cond:{zh:"NaOH 醇溶液, 加热",en:"NaOH(alc), Heat"}},
-  {chapter:"halogen",from:"C2H2",to:"PVC_m",type:"Addition",cond:{zh:"HCl, 催化剂",en:"HCl, Cat."}},
-  {chapter:"alcohol_phenol",from:"C2H4",to:"EtOH",type:"Addition",cond:{zh:"H₂O, 催化剂",en:"H₂O, Cat."}},
-  {chapter:"alcohol_phenol",from:"EtOH",to:"C2H4",type:"Elimination",cond:{zh:"浓H₂SO₄, 170℃",en:"H₂SO₄, 170℃"}},
-  {chapter:"alcohol_phenol",from:"EtOH",to:"CH3CHO",type:"Oxidation",cond:{zh:"O₂, Cu, 加热",en:"O₂, Cu, Heat"}},
-  {chapter:"alcohol_phenol",from:"Phenol",to:"TribromoPh",type:"Substitution",cond:{zh:"浓溴水",en:"Conc. Br₂"}},
-  {chapter:"alcohol_phenol",from:"Phenol",to:"NaPhenolate",type:"Acid-Base",cond:{zh:"NaOH 或 Na",en:"NaOH/Na"}},
+  {chapter:"halogen",from:"C2H2",to:"PVC_m",type:"Addition",cond:{zh:"HCl, 催化剂, 加热",en:"HCl, Cat., Heat"}},
+  {chapter:"alcohol_phenol",from:"C2H4",to:"EtOH",type:"Addition",cond:{zh:"H₂O, 催化剂, 加热加压",en:"H₂O, Cat., Heat, P"}},
+  {chapter:"alcohol_phenol",from:"EtOH",to:"C2H4",type:"Elimination",cond:{zh:"浓H₂SO₄, 170℃",en:"Conc. H₂SO₄, 170℃"}},
+  {chapter:"alcohol_phenol",from:"EtOH",to:"CH3CHO",type:"Oxidation",cond:{zh:"O₂, Cu/Ag, 加热",en:"O₂, Cu/Ag, Heat"}},
+  {chapter:"alcohol_phenol",from:"Phenol",to:"TribromoPh",type:"Substitution",cond:{zh:"浓溴水",en:"Br₂ (aq)"}},
+  {chapter:"alcohol_phenol",from:"Phenol",to:"NaPhenolate",type:"Acid-Base",cond:{zh:"NaOH 或 Na",en:"NaOH or Na"}},
   {chapter:"alcohol_phenol",from:"NaPhenolate",to:"Phenol",type:"Acid-Base",cond:{zh:"CO₂ + H₂O",en:"CO₂ + H₂O"}},
-  {chapter:"alcohol_phenol",from:"BzBr",to:"NaPhenolate",type:"Substitution",cond:{zh:"NaOH, 高温高压",en:"NaOH, High P"}},
-  {chapter:"aldehyde",from:"EtOH",to:"CH3CHO",type:"Oxidation",cond:{zh:"O₂, Cu, 加热",en:"O₂, Cu"}},
-  {chapter:"aldehyde",from:"CH3CHO",to:"EtOH",type:"Reduction",cond:{zh:"H₂, Ni, 加热",en:"H₂, Ni"}},
-  {chapter:"aldehyde",from:"CH3CHO",to:"AcOH",type:"Oxidation",cond:{zh:"酸性 KMnO₄",en:"Acidic KMnO₄"}},
-  {chapter:"aldehyde",from:"CH3CHO",to:"AcOH",type:"Oxidation",cond:{zh:"银氨溶液 (银镜)",en:"Tollens'"}},
-  {chapter:"aldehyde",from:"Glycol",to:"Glyoxal",type:"Oxidation",cond:{zh:"O₂, Cu, 加热",en:"O₂, Cu"}},
+  {chapter:"alcohol_phenol",from:"BzBr",to:"NaPhenolate",type:"Substitution",cond:{zh:"NaOH 水溶液, 高温高压",en:"NaOH(aq), High T/P"}},
+  {chapter:"aldehyde",from:"EtOH",to:"CH3CHO",type:"Oxidation",cond:{zh:"O₂, Cu/Ag, 加热",en:"O₂, Cu/Ag, Heat"}},
+  {chapter:"aldehyde",from:"CH3CHO",to:"EtOH",type:"Reduction",cond:{zh:"H₂, Ni, 加热",en:"H₂, Ni, Heat"}},
+  {chapter:"aldehyde",from:"CH3CHO",to:"AcOH",type:"Oxidation",cond:{zh:"酸性 KMnO₄ 或 O₂/催化剂",en:"Acidic KMnO₄ or O₂/Cat."}},
+  {chapter:"aldehyde",from:"CH3CHO",to:"AcOH",type:"Oxidation",cond:{zh:"银氨溶液 或 新制Cu(OH)₂",en:"Tollens' or Fehling's"}},
+  {chapter:"aldehyde",from:"Glycol",to:"Glyoxal",type:"Oxidation",cond:{zh:"O₂, Cu/Ag, 加热",en:"O₂, Cu/Ag, Heat"}},
   {chapter:"aldehyde",from:"Glyoxal",to:"OxalicAcid",type:"Oxidation",cond:{zh:"O₂, 催化剂",en:"O₂, Cat."}},
-  {chapter:"aldehyde",from:"Acetone",to:"Isopropanol",type:"Reduction",cond:{zh:"H₂, Ni",en:"H₂, Ni"}},
-  {chapter:"acid_ester",from:"AcOH",to:"EtOAc",type:"Esterification",cond:{zh:"EtOH, 浓H₂SO₄",en:"EtOH, H₂SO₄"}},
-  {chapter:"acid_ester",from:"EtOAc",to:"AcOH",type:"Hydrolysis",cond:{zh:"稀H₂SO₄, 加热",en:"Dilute H₂SO₄"}},
-  {chapter:"acid_ester",from:"EtOAc",to:"EtOH",type:"Hydrolysis",cond:{zh:"NaOH 溶液, 加热",en:"NaOH(aq)"}},
-  {chapter:"acid_ester",from:"Toluene",to:"BzOH",type:"Oxidation",cond:{zh:"酸性 KMnO₄",en:"Acidic KMnO₄"}},
-  {chapter:"acid_ester",from:"SalicylicAcid",to:"Aspirin",type:"Esterification",cond:{zh:"乙酸酐",en:"Ac₂O"}},
-  {chapter:"acid_ester",from:"Glycol",to:"PET",type:"Polycondensation",cond:{zh:"对苯二甲酸",en:"Terephthalic Acid"}},
-  {chapter:"nitrogen",from:"Bz",to:"NitroBz",type:"Substitution",cond:{zh:"浓HNO₃/H₂SO₄",en:"Conc. HNO₃"}},
-  {chapter:"nitrogen",from:"Toluene",to:"TNT",type:"Substitution",cond:{zh:"浓HNO₃, 加热",en:"Conc. HNO₃"}},
-  {chapter:"nitrogen",from:"NitroBz",to:"Aniline",type:"Reduction",cond:{zh:"Fe / HCl",en:"Fe / HCl"}},
-  {chapter:"nitrogen",from:"Aniline",to:"Acetanilide",type:"Substitution",cond:{zh:"乙酸酐/乙酰氯",en:"Ac₂O/AcCl"}},
-  {chapter:"nitrogen",from:"Aniline",to:"TribromoAniline",type:"Substitution",cond:{zh:"浓溴水",en:"Conc. Br₂"}},
-  {chapter:"polymer",from:"C2H4",to:"PE",type:"Polymerisation",cond:{zh:"催化剂, 高温高压",en:"Cat., High P"}},
-  {chapter:"polymer",from:"Styrene",to:"PS",type:"Polymerisation",cond:{zh:"催化剂",en:"Catalyst"}},
-  {chapter:"polymer",from:"PVC_m",to:"PVC",type:"Polymerisation",cond:{zh:"引发剂",en:"Initiator"}},
-  {chapter:"polymer",from:"MeMethacrylate",to:"PMMA",type:"Polymerisation",cond:{zh:"引发剂",en:"Initiator"}},
-  {chapter:"polymer",from:"Phenol",to:"PhenolicResin",type:"Polycondensation",cond:{zh:"HCHO, 催化剂",en:"HCHO, Cat."}},
-  {chapter:"polymer",from:"13Butadiene",to:"Rubber",type:"Polymerisation",cond:{zh:"Na (催化)",en:"Na"}},
+  {chapter:"aldehyde",from:"Acetone",to:"Isopropanol",type:"Reduction",cond:{zh:"H₂, Ni, 加热",en:"H₂, Ni, Heat"}},
+  {chapter:"acid_ester",from:"AcOH",to:"EtOAc",type:"Esterification",cond:{zh:"EtOH, 浓H₂SO₄, 加热",en:"EtOH, Conc. H₂SO₄, Heat"}},
+  {chapter:"acid_ester",from:"EtOAc",to:"AcOH",type:"Hydrolysis",cond:{zh:"稀H₂SO₄, 加热",en:"Dil. H₂SO₄, Heat"}},
+  {chapter:"acid_ester",from:"EtOAc",to:"EtOH",type:"Hydrolysis",cond:{zh:"NaOH 水溶液, 加热",en:"NaOH(aq), Heat"}},
+  {chapter:"acid_ester",from:"Toluene",to:"BzOH",type:"Oxidation",cond:{zh:"酸性 KMnO₄, 加热",en:"Acidic KMnO₄, Heat"}},
+  {chapter:"acid_ester",from:"SalicylicAcid",to:"Aspirin",type:"Esterification",cond:{zh:"乙酸酐, 浓H₂SO₄",en:"Ac₂O, Conc. H₂SO₄"}},
+  {chapter:"acid_ester",from:"Glycol",to:"PET",type:"Polycondensation",cond:{zh:"对苯二甲酸, 催化剂, 加热",en:"Terephthalic Acid, Cat., Heat"}},
+  {chapter:"nitrogen",from:"Bz",to:"NitroBz",type:"Substitution",cond:{zh:"浓HNO₃, 浓H₂SO₄, 50-60℃",en:"Conc. HNO₃/H₂SO₄, 50-60℃"}},
+  {chapter:"nitrogen",from:"Toluene",to:"TNT",type:"Substitution",cond:{zh:"浓HNO₃, 浓H₂SO₄, 加热",en:"Conc. HNO₃/H₂SO₄, Heat"}},
+  {chapter:"nitrogen",from:"NitroBz",to:"Aniline",type:"Reduction",cond:{zh:"Fe, HCl, 加热",en:"Fe, HCl, Heat"}},
+  {chapter:"nitrogen",from:"Aniline",to:"Acetanilide",type:"Substitution",cond:{zh:"乙酸酐 或 乙酰氯",en:"Ac₂O or AcCl"}},
+  {chapter:"nitrogen",from:"Aniline",to:"TribromoAniline",type:"Substitution",cond:{zh:"浓溴水",en:"Br₂ (aq)"}},
+  {chapter:"polymer",from:"C2H4",to:"PE",type:"Polymerisation",cond:{zh:"催化剂, 高温高压",en:"Cat., High P, Heat"}},
+  {chapter:"polymer",from:"Styrene",to:"PS",type:"Polymerisation",cond:{zh:"引发剂, 加热",en:"Initiator, Heat"}},
+  {chapter:"polymer",from:"PVC_m",to:"PVC",type:"Polymerisation",cond:{zh:"引发剂, 加热",en:"Initiator, Heat"}},
+  {chapter:"polymer",from:"MeMethacrylate",to:"PMMA",type:"Polymerisation",cond:{zh:"引发剂, 加热",en:"Initiator, Heat"}},
+  {chapter:"polymer",from:"Phenol",to:"PhenolicResin",type:"Polycondensation",cond:{zh:"HCHO, 酸/碱催化剂, 加热",en:"HCHO, Acid/Base Cat., Heat"}},
+  {chapter:"polymer",from:"13Butadiene",to:"Rubber",type:"Polymerisation",cond:{zh:"催化剂 (如Na), 加热",en:"Cat. (e.g., Na), Heat"}},
 ];
 
 // --- 游戏配置常量 ---
@@ -342,32 +341,32 @@ const LLM_PROVIDERS: Record<string, { name: string, baseUrl: string, model: stri
 };
 
 const SYMMETRY_CORE: MoleculeSymmetry[] = [
-    { molecule: 'H₂O', name: 'Water', pointGroup: 'C2v', elements: ['E', 'C₂', 'σv(xz)', 'σv\'(yz)'], wrong: ['i', 'C₃', 'σh', 'D₂'] },
-    { molecule: 'NH₃', name: 'Ammonia', pointGroup: 'C3v', elements: ['E', '2C₃', '3σv'], wrong: ['i', 'C₂', 'σh', 'S₄'] },
+    { molecule: 'H₂O', name: 'Water', pointGroup: 'C₂v', elements: ['E', 'C₂', 'σv(xz)', 'σv\'(yz)'], wrong: ['i', 'C₃', 'σh', 'D₂'] },
+    { molecule: 'NH₃', name: 'Ammonia', pointGroup: 'C₃v', elements: ['E', '2C₃', '3σv'], wrong: ['i', 'C₂', 'σh', 'S₄'] },
     { molecule: 'CH₄', name: 'Methane', pointGroup: 'Td', elements: ['E', '8C₃', '3C₂', '6S₄', '6σd'], wrong: ['i', 'C₆', 'σh', 'D₄'] },
-    { molecule: 'C₆H₆', name: 'Benzene', pointGroup: 'D6h', elements: ['E', '2C₆', '2C₃', 'C₂', '3C₂\'', '3C₂\"', 'i', '2S₃', '2S₆', 'σh', '3σd', '3σv'], wrong: ['Td', 'Oh', 'S₈'] },
+    { molecule: 'C₆H₆', name: 'Benzene', pointGroup: 'D₆h', elements: ['E', '2C₆', '2C₃', 'C₂', '3C₂\'', '3C₂\"', 'i', '2S₃', '2S₆', 'σh', '3σd', '3σv'], wrong: ['Td', 'Oh', 'S₈'] },
     { molecule: 'CO₂', name: 'Carbon Dioxide', pointGroup: 'D∞h', elements: ['E', '2C∞', '∞σv', 'i', '2S∞', '∞C₂', 'σh'], wrong: ['Td', 'C₃', 'S₄'] },
-    { molecule: 'BF₃', name: 'Boron Trifluoride', pointGroup: 'D3h', elements: ['E', '2C₃', '3C₂', 'σh', '2S₃', '3σv'], wrong: ['i', 'C₄', 'Oh'] },
-    { molecule: 'SF₆', name: 'Sulfur Hexafluoride', pointGroup: 'Oh', elements: ['E', '8C₃', '6C₂', '6C₄', '3C₂(=C₄²)', 'i', '24S₄', '8S₆', '3σh', '6σd'], wrong: ['D∞h', 'C₅', 'C2v'] },
-    { molecule: 'H₂O₂ (anti)', name: 'Hydrogen Peroxide', pointGroup: 'C2h', elements: ['E', 'C₂', 'i', 'σh'], wrong: ['C₃', 'σv', 'Td'] },
-    { molecule: 'H₂O₂ (gauche)', name: 'Hydrogen Peroxide', pointGroup: 'C2', elements: ['E', 'C₂'], wrong: ['i', 'σh', 'σv', 'C₃'] },
+    { molecule: 'BF₃', name: 'Boron Trifluoride', pointGroup: 'D₃h', elements: ['E', '2C₃', '3C₂', 'σh', '2S₃', '3σv'], wrong: ['i', 'C₄', 'Oh'] },
+    { molecule: 'SF₆', name: 'Sulfur Hexafluoride', pointGroup: 'Oh', elements: ['E', '8C₃', '6C₂', '6C₄', '3C₂(=C₄²)', 'i', '24S₄', '8S₆', '3σh', '6σd'], wrong: ['D∞h', 'C₅', 'C₂v'] },
+    { molecule: 'H₂O₂ (anti)', name: 'Hydrogen Peroxide', pointGroup: 'C₂h', elements: ['E', 'C₂', 'i', 'σh'], wrong: ['C₃', 'σv', 'Td'] },
+    { molecule: 'H₂O₂ (gauche)', name: 'Hydrogen Peroxide', pointGroup: 'C₂', elements: ['E', 'C₂'], wrong: ['i', 'σh', 'σv', 'C₃'] },
     { molecule: 'HCN', name: 'Hydrogen Cyanide', pointGroup: 'C∞v', elements: ['E', '2C∞', '∞σv'], wrong: ['i', 'σh', 'C₂'] },
-    { molecule: 'XeF₄', name: 'Xenon Tetrafluoride', pointGroup: 'D4h', elements: ['E', '2C₄', 'C₂', '2C₂\'', '2C₂\"', 'i', '2S₄', 'σh', '2σv', '2σd'], wrong: ['Td', 'Oh', 'C₃'] },
-    { molecule: 'C₂H₄', name: 'Ethylene', pointGroup: 'D2h', elements: ['E', 'C₂(z)', 'C₂(y)', 'C₂(x)', 'i', 'σ(xy)', 'σ(xz)', 'σ(yz)'], wrong: ['C₃', 'S₄', 'Oh'] },
-    { molecule: 'C₃H₄', name: 'Allene', pointGroup: 'D2d', elements: ['E', '2S₄', 'C₂(z)', '2C₂\'', '2σd'], wrong: ['i', 'σh', 'C₃'] },
-    { molecule: 'C₅H₅FeC₅H₅ (staggered)', name: 'Ferrocene', pointGroup: 'D5d', elements: ['E', '2C₅', '2C₅²', '5C₂', 'i', '2S₁₀', '2S₁₀³', '5σd'], wrong: ['σh', 'C₃', 'Oh'] },
-    { molecule: 'C₅H₅FeC₅H₅ (eclipsed)', name: 'Ferrocene', pointGroup: 'D5h', elements: ['E', '2C₅', '2C₅²', '5C₂', 'σh', '2S₅', '2S₅³', '5σv'], wrong: ['i', 'C₃', 'Oh'] },
-    { molecule: 'C₆H₁₂ (chair)', name: 'Cyclohexane', pointGroup: 'D3d', elements: ['E', '2C₃', '3C₂', 'i', '2S₆', '3σd'], wrong: ['σh', 'C₄', 'Td'] },
-    { molecule: 'C₆H₁₂ (boat)', name: 'Cyclohexane', pointGroup: 'C2v', elements: ['E', 'C₂', 'σv(xz)', 'σv\'(yz)'], wrong: ['i', 'σh', 'C₃'] },
-    { molecule: 'PCl₅', name: 'Phosphorus Pentachloride', pointGroup: 'D3h', elements: ['E', '2C₃', '3C₂', 'σh', '2S₃', '3σv'], wrong: ['i', 'C₄', 'Oh'] },
-    { molecule: 'C₆₀', name: 'Buckminsterfullerene', pointGroup: 'Ih', elements: ['E', '12C₅', '12C₅²', '20C₃', '15C₂', 'i', '12S₁₀', '12S₁₀³', '20S₆', '15σ'], wrong: ['D6h', 'Oh', 'Td'] },
-    { molecule: 'SO₂', name: 'Sulfur Dioxide', pointGroup: 'C2v', elements: ['E', 'C₂', 'σv(xz)', 'σv\'(yz)'], wrong: ['i', 'C₃', 'σh'] },
-    { molecule: 'SO₃', name: 'Sulfur Trioxide', pointGroup: 'D3h', elements: ['E', '2C₃', '3C₂', 'σh', '2S₃', '3σv'], wrong: ['i', 'C₄', 'Oh'] },
+    { molecule: 'XeF₄', name: 'Xenon Tetrafluoride', pointGroup: 'D₄h', elements: ['E', '2C₄', 'C₂', '2C₂\'', '2C₂\"', 'i', '2S₄', 'σh', '2σv', '2σd'], wrong: ['Td', 'Oh', 'C₃'] },
+    { molecule: 'C₂H₄', name: 'Ethylene', pointGroup: 'D₂h', elements: ['E', 'C₂(z)', 'C₂(y)', 'C₂(x)', 'i', 'σ(xy)', 'σ(xz)', 'σ(yz)'], wrong: ['C₃', 'S₄', 'Oh'] },
+    { molecule: 'C₃H₄', name: 'Allene', pointGroup: 'D₂d', elements: ['E', '2S₄', 'C₂(z)', '2C₂\'', '2σd'], wrong: ['i', 'σh', 'C₃'] },
+    { molecule: 'C₅H₅FeC₅H₅ (staggered)', name: 'Ferrocene', pointGroup: 'D₅d', elements: ['E', '2C₅', '2C₅²', '5C₂', 'i', '2S₁₀', '2S₁₀³', '5σd'], wrong: ['σh', 'C₃', 'Oh'] },
+    { molecule: 'C₅H₅FeC₅H₅ (eclipsed)', name: 'Ferrocene', pointGroup: 'D₅h', elements: ['E', '2C₅', '2C₅²', '5C₂', 'σh', '2S₅', '2S₅³', '5σv'], wrong: ['i', 'C₃', 'Oh'] },
+    { molecule: 'C₆H₁₂ (chair)', name: 'Cyclohexane', pointGroup: 'D₃d', elements: ['E', '2C₃', '3C₂', 'i', '2S₆', '3σd'], wrong: ['σh', 'C₄', 'Td'] },
+    { molecule: 'C₆H₁₂ (boat)', name: 'Cyclohexane', pointGroup: 'C₂v', elements: ['E', 'C₂', 'σv(xz)', 'σv\'(yz)'], wrong: ['i', 'σh', 'C₃'] },
+    { molecule: 'PCl₅', name: 'Phosphorus Pentachloride', pointGroup: 'D₃h', elements: ['E', '2C₃', '3C₂', 'σh', '2S₃', '3σv'], wrong: ['i', 'C₄', 'Oh'] },
+    { molecule: 'C₆₀', name: 'Buckminsterfullerene', pointGroup: 'Ih', elements: ['E', '12C₅', '12C₅²', '20C₃', '15C₂', 'i', '12S₁₀', '12S₁₀³', '20S₆', '15σ'], wrong: ['D₆h', 'Oh', 'Td'] },
+    { molecule: 'SO₂', name: 'Sulfur Dioxide', pointGroup: 'C₂v', elements: ['E', 'C₂', 'σv(xz)', 'σv\'(yz)'], wrong: ['i', 'C₃', 'σh'] },
+    { molecule: 'SO₃', name: 'Sulfur Trioxide', pointGroup: 'D₃h', elements: ['E', '2C₃', '3C₂', 'σh', '2S₃', '3σv'], wrong: ['i', 'C₄', 'Oh'] },
     { molecule: 'NH₄⁺', name: 'Ammonium', pointGroup: 'Td', elements: ['E', '8C₃', '3C₂', '6S₄', '6σd'], wrong: ['i', 'C₆', 'σh', 'D₄'] },
-    { molecule: 'PtCl₄²⁻', name: 'Tetrachloroplatinate', pointGroup: 'D4h', elements: ['E', '2C₄', 'C₂', '2C₂\'', '2C₂\"', 'i', '2S₄', 'σh', '2σv', '2σd'], wrong: ['Td', 'Oh', 'C₃'] },
-    { molecule: 'IF₇', name: 'Iodine Heptafluoride', pointGroup: 'D5h', elements: ['E', '2C₅', '2C₅²', '5C₂', 'σh', '2S₅', '2S₅³', '5σv'], wrong: ['i', 'C₃', 'Oh'] },
-    { molecule: '[Ru(bpy)₃]²⁺', name: 'Tris(bipyridine)ruthenium(II)', pointGroup: 'D3', elements: ['E', '2C₃', '3C₂'], wrong: ['i', 'σh', 'σv', 'S₆'] },
-    { molecule: 'B₁₂H₁₂²⁻', name: 'Dodecaborate', pointGroup: 'Ih', elements: ['E', '12C₅', '12C₅²', '20C₃', '15C₂', 'i', '12S₁₀', '12S₁₀³', '20S₆', '15σ'], wrong: ['D6h', 'Oh', 'Td'] }
+    { molecule: 'PtCl₄²⁻', name: 'Tetrachloroplatinate', pointGroup: 'D₄h', elements: ['E', '2C₄', 'C₂', '2C₂\'', '2C₂\"', 'i', '2S₄', 'σh', '2σv', '2σd'], wrong: ['Td', 'Oh', 'C₃'] },
+    { molecule: 'IF₇', name: 'Iodine Heptafluoride', pointGroup: 'D₅h', elements: ['E', '2C₅', '2C₅²', '5C₂', 'σh', '2S₅', '2S₅³', '5σv'], wrong: ['i', 'C₃', 'Oh'] },
+    { molecule: '[Ru(bpy)₃]²⁺', name: 'Tris(bipyridine)ruthenium(II)', pointGroup: 'D₃', elements: ['E', '2C₃', '3C₂'], wrong: ['i', 'σh', 'σv', 'S₆'] },
+    { molecule: 'B₁₂H₁₂²⁻', name: 'Dodecaborate', pointGroup: 'Ih', elements: ['E', '12C₅', '12C₅²', '20C₃', '15C₂', 'i', '12S₁₀', '12S₁₀³', '20S₆', '15σ'], wrong: ['D₆h', 'Oh', 'Td'] }
 ];
 
 type FoodItem = { id: number; x: number; y: number; val: string; isCorrect: boolean; kind: GameMode };
@@ -459,7 +458,24 @@ const RXN_TYPES_CORE: Record<string, {zh: string, en: string}> = {
   "Water-Gas": {zh: "水煤气反应", en: "Water-Gas"},
   "Atmospheric": {zh: "大气反应", en: "Atmospheric"},
   "Recombination": {zh: "复合反应", en: "Recombination"},
-  "Fission": {zh: "裂变反应", en: "Fission"}
+  "Fission": {zh: "裂变反应", en: "Fission"},
+  "Nitration": {zh: "硝化反应", en: "Nitration"},
+  "Sulfonation": {zh: "磺化反应", en: "Sulfonation"},
+  "Alkylation": {zh: "烷基化反应", en: "Alkylation"},
+  "Acylation": {zh: "酰基化反应", en: "Acylation"},
+  "Diazotization": {zh: "重氮化反应", en: "Diazotization"},
+  "Coupling": {zh: "偶联反应", en: "Coupling"},
+  "Grignard": {zh: "格氏反应", en: "Grignard Reaction"},
+  "Cannizzaro": {zh: "坎尼扎罗反应", en: "Cannizzaro Reaction"},
+  "Aldol": {zh: "羟醛缩合", en: "Aldol Condensation"},
+  "Wittig": {zh: "维蒂希反应", en: "Wittig Reaction"},
+  "Diels-Alder": {zh: "狄尔斯-阿尔德反应", en: "Diels-Alder Reaction"},
+  "Friedel-Crafts": {zh: "傅克反应", en: "Friedel-Crafts Reaction"},
+  "Saponification": {zh: "皂化反应", en: "Saponification"},
+  "Dehydration": {zh: "脱水反应", en: "Dehydration"},
+  "Hydrogenation": {zh: "加氢反应", en: "Hydrogenation"},
+  "Halogenation": {zh: "卤化反应", en: "Halogenation"},
+  "Hydrohalogenation": {zh: "加卤化氢反应", en: "Hydrohalogenation"}
 };
 
 const CHAPTER_ORDER =[
@@ -467,7 +483,7 @@ const CHAPTER_ORDER =[
 ];
 
 const AUDIO_PATHS = {
-  bgm: bgmAudio,
+  bgm: 'https://cdn.jsdelivr.net/gh/bxy1112-sketch/CJ-ChemSnake-Handheld@main/bgm.mp3',
 };
 
 const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
@@ -1055,6 +1071,7 @@ const App = () => {
                 }
                 return newState;
             });
+            hasManuallyToggledControlsRef.current = true;
             hasToggled = true;
         }
       }
@@ -1084,7 +1101,22 @@ const App = () => {
         }
     };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (['Shift', 'Control', 'Alt', 'Meta', 'c', 'C'].includes(e.key)) return;
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+        
+        if (window.innerWidth >= 768 && !hasManuallyToggledControlsRef.current) {
+            setShowControls(false);
+        }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [menuPage, menuIndex]);
 
   const [grid, setGrid] = useState({ w: 15, h: 20 });
@@ -1315,6 +1347,7 @@ const App = () => {
     try { return localStorage.getItem('custom_model') || ''; } catch { return ''; }
   });
   const [showControls, setShowControls] = useState(() => shouldShowControlsInitially());
+  const [showControlsHint, setShowControlsHint] = useState(false);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -1330,6 +1363,7 @@ const App = () => {
   const lastGamepadState = useRef({ A: false, B: false, X: false, Y_face: false, LB: false, LT: false, Accel: false, Start: false, Select: false, L3: false, R3: false });
   const lastGamepadState2 = useRef({ R3: false, Accel: false, Start: false });
   const usingGamepadRef = useRef(false);
+  const hasManuallyToggledControlsRef = useRef(false);
   
   const activeGamepadIndexRef = useRef<number | null>(null);
   const handleActionRef = useRef<((btn: 'A' | 'B' | 'X' | 'Y' | 'START' | 'SELECT' | 'RESET' | 'MENU' | 'EXIT' | 'TIME' | 'TOGGLE_CONTROLS', fromMenu?: boolean) => void) | null>(null);
@@ -2224,7 +2258,16 @@ const App = () => {
     state.isTutorial = tutorial;
     state.isVersus = versus;
     
-    setShowControls(versus ? false : shouldShowControlsInitially());
+    if (versus) {
+        setShowControls(false);
+    }
+    
+    // Show hint if controls are hidden
+    if (versus || !showControls) {
+        setShowControlsHint(true);
+        setTimeout(() => setShowControlsHint(false), 5000);
+    }
+    
     setTutorialStep(0);
     tutorialTimerRef.current = 0;
     setAiReportAnalysis(null);
@@ -3442,10 +3485,12 @@ const App = () => {
 
   const getHudFontSize = (text: string) => {
      if (!text) return 'text-xl';
-     if (text.length > 20) return 'text-[9px] md:text-xs';
-     if (text.length > 12) return 'text-xs md:text-sm'; 
-     if (text.length > 8) return 'text-sm md:text-base';
-     return 'text-xl';
+     if (text.length > 25) return 'text-[7px] md:text-[9px]';
+     if (text.length > 20) return 'text-[8px] md:text-[10px]';
+     if (text.length > 15) return 'text-[10px] md:text-xs';
+     if (text.length > 10) return 'text-xs md:text-sm'; 
+     if (text.length > 6) return 'text-sm md:text-base';
+     return 'text-lg md:text-xl';
   };
 
   const draw = () => {
@@ -3472,14 +3517,8 @@ const App = () => {
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)'; 
-    ctx.lineWidth = 1;
-    for (let x = 0; x <= gridW; x++) { 
-        ctx.beginPath(); ctx.moveTo(offsetX + x * cellSize, offsetY); ctx.lineTo(offsetX + x * cellSize, offsetY + gridPixelH); ctx.stroke(); 
-    }
-    for (let y = 0; y <= gridH; y++) { 
-        ctx.beginPath(); ctx.moveTo(offsetX, offsetY + y * cellSize); ctx.lineTo(offsetX + gridPixelW, offsetY + y * cellSize); ctx.stroke(); 
-    }
+    // Grid lines removed for a cleaner look
+    
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)'; 
     ctx.lineWidth = 2;
     ctx.strokeRect(offsetX, offsetY, gridPixelW, gridPixelH);
@@ -3760,6 +3799,7 @@ const App = () => {
     const menuIndex = overrideIndex !== undefined ? overrideIndex : stateRef.current.menuIndex;
 
     if (btn === 'TOGGLE_CONTROLS') {
+        hasManuallyToggledControlsRef.current = true;
         setShowControls(s => !s);
         return;
     }
@@ -3912,9 +3952,9 @@ const App = () => {
     if (currState === 'MENU') {
        if (btn === 'B') {
           if (menuPage !== 'MAIN') { 
-              if (menuPage === 'CHAPTERS') setMenuIndex(1);
-              else if (menuPage === 'DIFFICULTY') setMenuIndex(2);
-              else if (menuPage === 'SETTINGS') setMenuIndex(6);
+              if (menuPage === 'CHAPTERS') setMenuIndex(isLargeScreen ? 3 : 2);
+              else if (menuPage === 'DIFFICULTY') setMenuIndex(isLargeScreen ? 4 : 3);
+              else if (menuPage === 'SETTINGS') setMenuIndex(isLargeScreen ? 6 : 5);
               else if (menuPage === 'ABOUT') {
                   setMenuPage('SETTINGS');
                   setMenuIndex(11);
@@ -3927,7 +3967,7 @@ const App = () => {
                   play('back');
                   return;
               }
-              else if (menuPage === 'LEADERBOARD') setMenuIndex(3);
+              else if (menuPage === 'LEADERBOARD') setMenuIndex(isLargeScreen ? 5 : 4);
               else setMenuIndex(0);
               setMenuPage('MAIN'); 
               play('back'); 
@@ -3973,34 +4013,38 @@ const App = () => {
              const diffs: Difficulty[] =['VERY_EASY', 'EASY', 'NORMAL', 'HARD', 'INSANE'];
              setSettings(s => ({ ...s, difficulty: diffs[menuIndex] }));
           } else if (menuPage === 'SETTINGS') {
-             if (menuIndex === 0) setSettings(s => ({ ...s, sound: !s.sound }));
-             if (menuIndex === 1) setSettings(s => ({ ...s, music: !s.music }));
-             if (menuIndex === 2) setSettings(s => ({ ...s, vibration: !s.vibration }));
-             if (menuIndex === 3) setSettings(s => ({ ...s, language: s.language === 'zh' ? 'en' : 'zh' }));
-             if (menuIndex === 4) setSettings(s => ({ ...s, timeLimitMode: !s.timeLimitMode }));
-             if (menuIndex === 5) setSettings(s => {
-                 const durations = [60, 180, 300, 600];
-                 const nextIdx = (durations.indexOf(s.timeLimitDuration || 180) + 1) % durations.length;
-                 return { ...s, timeLimitDuration: durations[nextIdx] };
-             });
-             if (menuIndex === 6) setSettings(s => {
+             if (menuIndex === 0) setSettings(s => ({ ...s, language: s.language === 'zh' ? 'en' : 'zh' }));
+             if (menuIndex === 1) setSettings(s => ({ ...s, sound: !s.sound }));
+             if (menuIndex === 2) setSettings(s => ({ ...s, music: !s.music }));
+             if (menuIndex === 3) {
+                 showPrompt(getLocalizedUI('CUSTOM_BGM_PROMPT', settings.language), settings.customBgmUrl || '', (val) => {
+                     setSettings(s => ({ ...s, customBgmUrl: val.trim() }));
+                 });
+             }
+             if (menuIndex === 4) setSettings(s => ({ ...s, vibration: !s.vibration }));
+             if (menuIndex === 5) setSettings(s => ({ ...s, timeLimitMode: !s.timeLimitMode }));
+             if (menuIndex === 6) {
+                 if (stateRef.current.settings.timeLimitMode) {
+                     setSettings(s => {
+                         const durations = [60, 180, 300, 600];
+                         const nextIdx = (durations.indexOf(s.timeLimitDuration || 180) + 1) % durations.length;
+                         return { ...s, timeLimitDuration: durations[nextIdx] };
+                     });
+                 }
+             }
+             if (menuIndex === 7) setSettings(s => {
                  const current = s.joyDeadzone ?? 0.1;
                  const next = Math.round((current + 0.05) * 100) / 100;
                  return { ...s, joyDeadzone: next > 0.5 ? 0.0 : next };
              });
-             if (menuIndex === 7) setSettings(s => {
+             if (menuIndex === 8) setSettings(s => {
                  const current = s.joySensitivity ?? 1.0;
                  const next = Math.round((current + 0.2) * 10) / 10;
                  return { ...s, joySensitivity: next > 2.0 ? 0.5 : next };
              });
-             if (menuIndex === 8) {
+             if (menuIndex === 9) {
                  setPendingAction('settings');
                  setGameState('INPUT_INFO');
-             }
-             if (menuIndex === 9) {
-                 showPrompt(getLocalizedUI('CUSTOM_BGM_PROMPT', settings.language), settings.customBgmUrl || '', (val) => {
-                     setSettings(s => ({ ...s, customBgmUrl: val.trim() }));
-                 });
              }
              if (menuIndex === 10) { setMenuPage('AI_SETTINGS'); setMenuIndex(0); }
              if (menuIndex === 11) { setMenuPage('ABOUT'); setMenuIndex(0); }
@@ -4037,7 +4081,7 @@ const App = () => {
   const handleMenuAdjust = (dir: number, index?: number) => {
       const idx = index !== undefined ? index : stateRef.current.menuIndex;
       if (stateRef.current.menuPage === 'SETTINGS') {
-          if (idx === 6) {
+          if (idx === 7) {
               setSettings(s => {
                   const current = s.joyDeadzone ?? 0.1;
                   let next = Math.round((current + dir * 0.05) * 100) / 100;
@@ -4047,7 +4091,7 @@ const App = () => {
               });
               play('move');
               vibrate(10);
-          } else if (idx === 7) {
+          } else if (idx === 8) {
               setSettings(s => {
                   const current = s.joySensitivity ?? 1.0;
                   let next = Math.round((current + dir * 0.1) * 10) / 10;
@@ -4776,11 +4820,12 @@ const App = () => {
   const currentTextColor = themeColors.darkHex;
 
   return (
-    <div className={`fixed inset-0 flex flex-col items-center justify-center font-sans select-none overflow-hidden ${showControls ? 'bg-gradient-to-b from-[#c8c9c9] via-[#b8b9b9] to-[#a8a9a9] pt-[max(env(safe-area-inset-top),8px)] pb-[max(env(safe-area-inset-bottom),12px)]' : 'bg-black'} h-[100dvh]`}>
+    <div className={`fixed inset-0 flex flex-col items-center justify-center font-sans select-none overflow-hidden ${showControls ? 'bg-gradient-to-b from-[#c8c9c9] via-[#b8b9b9] to-[#a8a9a9] pt-[max(env(safe-area-inset-top),8px)] pb-[max(env(safe-area-inset-bottom),12px)]' : 'bg-[#1a1a1a] p-0 sm:p-1 md:p-2'} h-[100dvh]`}>
+        
         <FontStyles />
         {showControls && <div className="absolute inset-0 opacity-40 mix-blend-multiply bg-[radial-gradient(rgba(0,0,0,0.1)_0.5px,transparent_0.5px)] [background-size:2px_2px] pointer-events-none"></div>}
 
-        <div className={`relative z-10 transition-all duration-300 flex w-full h-full mx-auto ${showControls ? (isLandscape ? 'flex-row items-center justify-between p-1 sm:p-2 md:p-4 max-w-[1600px] gap-1 sm:gap-2 md:gap-4' : 'flex-col p-2 md:p-6 max-w-[800px]') : 'flex-col max-w-full'}`}>
+        <div className={`relative z-10 transition-all duration-300 flex w-full h-full mx-auto ${showControls ? (isLandscape ? 'flex-row items-center justify-between p-1 sm:p-2 md:p-4 max-w-[1600px] gap-1 sm:gap-2 md:gap-4' : 'flex-col p-2 md:p-6 max-w-[800px]') : 'flex-col items-center justify-center w-full h-full max-w-none'}`}>
           
           {isLandscape && showControls && (
              <div data-controls="true" className="flex flex-col justify-center items-center gap-6 sm:gap-10 shrink-0 relative h-full w-28 sm:w-36 md:w-48">
@@ -4797,12 +4842,45 @@ const App = () => {
              </div>
           )}
 
-          <div className={`relative flex flex-col z-10 ${showControls ? (isLandscape ? 'flex-1 h-full max-h-[90vh] min-w-0' : 'w-full flex-1 min-h-[40vh]') : 'w-full h-full flex-1'}`}>
+          <div className={`relative flex flex-col z-10 ${showControls ? (isLandscape ? 'flex-1 h-full max-h-[90vh] min-w-0' : 'w-full flex-1 min-h-[40vh]') : 'w-full h-full flex-1 max-h-none max-w-none mx-auto bg-[#dfdbce] rounded-[0.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.8),inset_0_4px_10px_rgba(255,255,255,0.8),inset_0_-8px_20px_rgba(0,0,0,0.15)] border-b-[8px] sm:border-b-[12px] border-[#b5b3a9] p-1.5 sm:p-3 md:p-4 pb-8 sm:pb-12 md:pb-16 relative'}`}>
               
-              <div className={`flex-1 ${showControls ? 'bg-[#5b5f63] shadow-[0_10px_20px_rgba(0,0,0,0.4),inset_0_2px_4px_rgba(255,255,255,0.1)] border-[3px] border-[#333] rounded-[0.5rem] md:rounded-[1rem] p-2 md:p-4' : 'bg-[#2c2f33] border border-[#4a4d53] shadow-[0_8px_32px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.15)] rounded-[1.25rem] mt-[max(env(safe-area-inset-top),12px)] mb-[max(env(safe-area-inset-bottom),12px)] ml-[max(env(safe-area-inset-left),12px)] mr-[max(env(safe-area-inset-right),12px)] p-1.5 sm:p-2.5'} relative overflow-hidden flex flex-col transition-all duration-500`}>
-                 
-                 <div className="absolute top-0 left-0 w-[150%] h-[30%] bg-gradient-to-b from-white/10 to-transparent -rotate-6 transform origin-top-left pointer-events-none z-0"></div>
+              {/* Retro Mac Details */}
+              {!showControls && (
+                  <>
+                      {/* Floppy Drive & Logo Area (Chin) */}
+                      <div className="absolute bottom-1.5 sm:bottom-3 left-0 right-0 flex justify-between items-end px-4 sm:px-8 pointer-events-none z-30">
+                          <div className="flex items-center gap-2 sm:gap-3 opacity-85">
+                              {/* Rainbow Logo */}
+                              <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-sm flex flex-col overflow-hidden shadow-sm">
+                                  <div className="flex-1 bg-[#61bb46]"></div>
+                                  <div className="flex-1 bg-[#fdb827]"></div>
+                                  <div className="flex-1 bg-[#f5821f]"></div>
+                                  <div className="flex-1 bg-[#e03a3e]"></div>
+                                  <div className="flex-1 bg-[#963d97]"></div>
+                                  <div className="flex-1 bg-[#009ddc]"></div>
+                              </div>
+                              <span className="font-sans font-bold text-[#666] text-xs sm:text-sm tracking-widest" style={{fontFamily: 'Garamond, serif', fontStyle: 'italic'}}>Chemintosh</span>
+                          </div>
+                          <div className="w-16 sm:w-24 h-1 sm:h-1.5 bg-[#222] rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.9),0_1px_0_rgba(255,255,255,0.6)]"></div>
+                      </div>
+                  </>
+              )}
 
+              <div className={`flex-1 ${showControls ? 'bg-[#5b5f63] shadow-[0_10px_20px_rgba(0,0,0,0.4),inset_0_2px_4px_rgba(255,255,255,0.1)] border-[3px] border-[#333] rounded-[0.5rem] md:rounded-[1rem] p-2 md:p-4' : 'bg-[#222] rounded-[0.5rem] p-0.5 sm:p-1 md:p-1.5 shadow-[inset_0_10px_20px_rgba(0,0,0,1),0_2px_5px_rgba(255,255,255,0.8),0_-2px_5px_rgba(0,0,0,0.3)]'} relative overflow-hidden flex flex-col transition-all duration-500`}>
+                 
+                 {/* Screen Glass Reflection */}
+                 {!showControls && (
+                     <>
+                         <div className="absolute inset-0 rounded-[0.5rem] bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none z-50"></div>
+                         <div className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] bg-gradient-to-b from-white/5 to-transparent -rotate-12 transform origin-top-left pointer-events-none z-50 rounded-[100%]"></div>
+                         {/* CRT Curvature Shadow */}
+                         <div className="absolute inset-0 rounded-[0.5rem] shadow-[inset_0_0_60px_rgba(0,0,0,0.9)] pointer-events-none z-40"></div>
+                     </>
+                 )}
+                 
+                 {showControls && <div className="absolute top-0 left-0 w-[150%] h-[30%] bg-gradient-to-b from-white/10 to-transparent -rotate-6 transform origin-top-left pointer-events-none z-0"></div>}
+
+                 {showControls && (
                  <div className="flex justify-between items-center mb-1 sm:mb-2 px-1 relative z-10 min-h-[14px] sm:min-h-[18px]">
                       {/* Left: Battery */}
                       <div className="text-[8px] sm:text-[10px] text-[#9a9e9e] font-bold tracking-widest flex items-center gap-1 sm:gap-2 font-pixel drop-shadow-sm shrink-0 z-10 opacity-80">
@@ -4825,7 +4903,7 @@ const App = () => {
                           {/* Controls Toggle Dot (Retro Red) */}
                           <div 
                               className="group relative outline-none p-4 -m-4 z-30"
-                              title={settings.language === 'zh' ? '虚拟按键状态 (双指捏合/张开切换)' : 'Virtual Controls Status (Pinch to toggle)'}
+                              title={settings.language === 'zh' ? '虚拟按键状态 (双指触碰切换)' : 'Virtual Controls Status (Two-finger touch to toggle)'}
                           >
                               <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 border border-[#111] rounded-full transition-all duration-500 ${!showControls ? 'bg-[#e81c1c] shadow-[0_0_8px_rgba(232,28,28,1),0_0_12px_rgba(232,28,28,0.6),inset_0_1px_2px_rgba(255,255,255,0.8)] animate-[pulse_3s_ease-in-out_infinite]' : 'bg-[#5c1010] shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]'}`}></div>
                           </div>
@@ -4836,85 +4914,81 @@ const App = () => {
                           </div>
                       </div>
                  </div>
+                 )}
 
-                 <div style={{backgroundColor: currentBgColor, color: currentTextColor}} className={`flex-1 ${showControls ? 'border-[2px] border-[#252626] rounded-sm' : 'border-[2px] border-[#1a1c1e] rounded-[0.75rem]'} relative overflow-hidden flex flex-col shadow-[inset_0_6px_16px_rgba(0,0,0,0.6)] transition-colors duration-500 z-10`}>
+                 <div style={{backgroundColor: currentBgColor, color: currentTextColor}} className={`flex-1 ${showControls ? 'border-[2px] border-[#252626] rounded-sm' : 'rounded-[0.25rem] sm:rounded-[0.5rem]'} relative overflow-hidden flex flex-col shadow-[inset_0_6px_16px_rgba(0,0,0,0.6)] transition-colors duration-500 z-10`}>
                       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(0,0,0,0.05)_50%,transparent_50%),linear-gradient(90deg,rgba(0,0,0,0.05)_50%,transparent_50%)] [background-size:4px_4px] z-30 mix-blend-overlay opacity-50"></div>
 
-                      {/* Dynamic Island */}
-                      <div className={`absolute top-0 left-1/2 -translate-x-1/2 z-40 bg-theme-dark text-theme-light rounded-b-[16px] shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_-2px_4px_rgba(255,255,255,0.1)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex justify-center items-center px-5 sm:px-8 py-1.5 sm:py-2 gap-4 sm:gap-6 border-x border-b border-theme-dark ${
-                          (gameState === 'PLAYING' || gameState === 'PAUSED' || gameState === 'QUIT_CONFIRM' || gameState === 'RESET_CONFIRM')
-                          ? 'translate-y-0 opacity-100 scale-100'
-                          : '-translate-y-full opacity-0 scale-95'
-                      }`}>
-                          {(settings.timeLimitMode || isTutorial) && (
-                              <div className={`flex items-center justify-center shrink-0 relative transition-all duration-300 ${timeLeft <= 10 && (gameState === 'PLAYING' || gameState === 'PAUSED') && !isTutorial ? 'animate-pulse' : ''}`}>
-                                  <span className={`relative z-10 text-xs sm:text-sm font-bold font-led tracking-tight leading-none ${timeLeft <= 10 && (gameState === 'PLAYING' || gameState === 'PAUSED') && !isTutorial ? 'text-[#ef4444] drop-shadow-[0_0_6px_rgba(239,68,68,0.8)]' : 'text-theme-light'}`}>
-                                      {isTutorial ? '03:00' : `${Math.floor((gameState === 'PLAYING' || gameState === 'PAUSED' || gameState === 'QUIT_CONFIRM' || gameState === 'RESET_CONFIRM' ? timeLeft : (settings.timeLimitDuration || 180)) / 60).toString().padStart(2, '0')}:${((gameState === 'PLAYING' || gameState === 'PAUSED' || gameState === 'QUIT_CONFIRM' || gameState === 'RESET_CONFIRM' ? timeLeft : (settings.timeLimitDuration || 180)) % 60).toString().padStart(2, '0')}`}
-                                  </span>
-                              </div>
-                          )}
-                          <div className="flex items-center justify-center shrink-0 relative" title={settings.language === 'zh' ? '进度: 已答对/总题数' : 'Progress: Solved/Total'}>
-                              <span className="relative z-10 text-xs sm:text-sm font-bold font-led tracking-tight leading-none text-theme-light">
-                                  {isTutorial ? '3/100' : (() => {
-                                      const selected = settings.selectedChapters;
-                                      let total = 0;
-                                      const getReactionModesCount = (r: any) => {
-                                          let allowedModes = ['product', 'cond', 'reactant', 'type'];
-                                          if (r.distractors) {
-                                              const explicitModes = Object.keys(r.distractors).filter(k => r.distractors[k]?.length);
-                                              if (explicitModes.length > 0) {
-                                                  allowedModes = explicitModes;
-                                              }
-                                          }
-                                          return allowedModes.length;
-                                      };
-
-                                      if (selected.length === 0) {
-                                          total = (dbReactions || []).reduce((acc: number, r: any) => acc + getReactionModesCount(r), 0) + (dbSymmetry || []).length;
-                                      } else {
-                                          total += (dbReactions || []).filter((r: any) => {
-                                              if (r.bankId && selected.includes(r.bankId)) return true;
-                                              if (selected.includes('ORGANIC') && !r.chapter.startsWith('CUSTOM_') && !['INORGANIC', 'STRUCTURAL', 'PHYSICAL', 'ANALYTICAL'].includes(r.chapter)) return true;
-                                              return selected.includes(r.chapter);
-                                          }).reduce((acc: number, r: any) => acc + getReactionModesCount(r), 0);
-                                          total += (dbSymmetry || []).filter((s: any) => {
-                                              if (s.bankId && selected.includes(s.bankId)) return true;
-                                              if (selected.includes('STRUCTURAL') && !s.bankId) return true;
-                                              return false;
-                                          }).length;
-                                      }
-                                      const solved = new Set((history || []).filter(h => h && h.correct).map(h => h.gameMode === 'symmetry' ? h.rxnFrom : `${h.rxnFrom}_${h.rxnTo}_${h.gameMode}`)).size;
-                                      return `${solved}/${total}`;
-                                  })()}
-                              </span>
-                          </div>
-                      </div>
-
-                      <div className="p-1 border-b border-black/20 z-20 shrink-0 min-h-[40px] sm:min-h-[50px] flex flex-col gap-0.5 font-pixel tracking-wide relative">
-                          <div className="flex justify-between items-center text-xs md:text-sm leading-normal border-b border-black/20 pb-1.5 mb-1 font-bold gap-2">
-                              <div className="uppercase min-w-0 truncate flex items-center gap-1.5 justify-start">
+                      <div className="px-1 sm:px-2 pt-1 pb-1 z-20 shrink-0 flex flex-col gap-1 sm:gap-1.5 font-pixel tracking-wide relative">
+                          <div className="flex justify-between items-center text-[10px] sm:text-xs md:text-sm leading-normal font-bold gap-1 opacity-75">
+                              <div className="uppercase min-w-0 flex items-center gap-1 justify-start flex-1 overflow-hidden">
                                   {chapterTitle.startsWith('📁') ? (
                                       <>
-                                          <Folder size={12} className="shrink-0" />
-                                          <span className="pt-0.5 truncate">{chapterTitle.replace('📁 ', '')}</span>
+                                          <Folder size={10} className="shrink-0 sm:w-3 sm:h-3" />
+                                          <span className="truncate pb-[2px]">{chapterTitle.replace('📁 ', '')}</span>
                                       </>
                                   ) : chapterTitle.includes(' ') ? (
                                       <>
-                                          <span className="shrink-0">{chapterTitle.split(' ')[0]}</span>
-                                          <span className="text-[10px] md:text-xs opacity-90 mt-[1px] truncate">{chapterTitle.split(' ').slice(1).join(' ')}</span>
+                                          <span className="shrink-0 pb-[2px]">{chapterTitle.split(' ')[0]}</span>
+                                          <span className="text-[8px] sm:text-[10px] opacity-90 truncate pb-[2px]">{chapterTitle.split(' ').slice(1).join(' ')}</span>
                                       </>
                                   ) : (
-                                      <span className="pt-0.5 truncate">{chapterTitle}</span>
+                                      <span className="truncate pb-[2px]">{chapterTitle}</span>
                                   )}
                               </div>
 
-                              <div className="flex gap-1.5 sm:gap-2 items-center justify-end opacity-90 whitespace-nowrap">
-                                   {settings.sound && <Volume2 size={12} className="shrink-0" />}
-                                   {settings.vibration && <Smartphone size={12} className="shrink-0" />}
-                                   <span className="text-sm tracking-tighter shrink-0 min-w-[3.5rem] text-right flex items-center gap-2">
+                              <div className="flex items-center justify-center gap-2 sm:gap-4 flex-1 shrink-0">
+                                  {(settings.timeLimitMode || isTutorial) && (
+                                      <div className={`flex items-center gap-1 ${timeLeft <= 10 && (gameState === 'PLAYING' || gameState === 'PAUSED') && !isTutorial ? 'animate-pulse text-[#ef4444] opacity-100' : ''}`}>
+                                          <Clock size={10} className="shrink-0 sm:w-3 sm:h-3" />
+                                          <span>{isTutorial ? '03:00' : `${Math.floor((gameState === 'PLAYING' || gameState === 'PAUSED' || gameState === 'QUIT_CONFIRM' || gameState === 'RESET_CONFIRM' ? timeLeft : (settings.timeLimitDuration || 180)) / 60).toString().padStart(2, '0')}:${((gameState === 'PLAYING' || gameState === 'PAUSED' || gameState === 'QUIT_CONFIRM' || gameState === 'RESET_CONFIRM' ? timeLeft : (settings.timeLimitDuration || 180)) % 60).toString().padStart(2, '0')}`}</span>
+                                      </div>
+                                  )}
+                                  <div className="flex items-center gap-1" title={settings.language === 'zh' ? '进度: 已答对/总题数' : 'Progress: Solved/Total'}>
+                                      <Check size={10} className="shrink-0 sm:w-3 sm:h-3" />
+                                      <span>
+                                          {isTutorial ? '3/100' : (() => {
+                                              const selected = settings.selectedChapters;
+                                              let total = 0;
+                                              const getReactionModesCount = (r: any) => {
+                                                  let allowedModes = ['product', 'cond', 'reactant', 'type'];
+                                                  if (r.distractors) {
+                                                      const explicitModes = Object.keys(r.distractors).filter(k => r.distractors[k]?.length);
+                                                      if (explicitModes.length > 0) {
+                                                          allowedModes = explicitModes;
+                                                      }
+                                                  }
+                                                  return allowedModes.length;
+                                              };
+                                              if (selected.length === 0) {
+                                                  total = (dbReactions || []).reduce((acc: number, r: any) => acc + getReactionModesCount(r), 0) + (dbSymmetry || []).length;
+                                              } else {
+                                                  total += (dbReactions || []).filter((r: any) => {
+                                                      if (r.bankId && selected.includes(r.bankId)) return true;
+                                                      if (selected.includes('ORGANIC') && !r.chapter.startsWith('CUSTOM_') && !['INORGANIC', 'STRUCTURAL', 'PHYSICAL', 'ANALYTICAL'].includes(r.chapter)) return true;
+                                                      return selected.includes(r.chapter);
+                                                  }).reduce((acc: number, r: any) => acc + getReactionModesCount(r), 0);
+                                                  total += (dbSymmetry || []).filter((s: any) => {
+                                                      if (s.bankId && selected.includes(s.bankId)) return true;
+                                                      if (selected.includes('STRUCTURAL') && !s.bankId) return true;
+                                                      return false;
+                                                  }).length;
+                                              }
+                                              const solved = new Set((history || []).filter(h => h && h.correct).map(h => h.gameMode === 'symmetry' ? h.rxnFrom : `${h.rxnFrom}_${h.rxnTo}_${h.gameMode}`)).size;
+                                              return `${solved}/${total}`;
+                                          })()}
+                                      </span>
+                                  </div>
+                              </div>
+
+                              <div className="flex gap-1 sm:gap-1.5 items-center justify-end whitespace-nowrap flex-1">
+                                   {settings.sound && <Volume2 size={10} className="shrink-0 sm:w-3 sm:h-3" />}
+                                   {settings.vibration && <Smartphone size={10} className="shrink-0 sm:w-3 sm:h-3" />}
+                                   <span className="tracking-tighter shrink-0 text-right flex items-center gap-1 sm:gap-2">
                                        {isVersus ? (
                                            <>
                                                <span className="text-theme-dark font-bold">P1: {score < 0 ? '-' + Math.abs(score).toString().padStart(4, '0') : score.toString().padStart(5, '0')}</span>
+                                               <span className="opacity-50">|</span>
                                                <span className="text-[#306230] font-bold">P2: {score2 < 0 ? '-' + Math.abs(score2).toString().padStart(4, '0') : score2.toString().padStart(5, '0')}</span>
                                            </>
                                        ) : (
@@ -4938,9 +5012,9 @@ const App = () => {
                                         {tutorialStep === 7 && (settings.language === 'zh' ? '还有些时候，你需要根据产物和条件猜测【反应物】！' : 'Other times, you need to guess the Reactant!')}
                                         {tutorialStep === 8 && (settings.language === 'zh' ? '完美！' : 'Perfect!')}
                                         {tutorialStep === 9 && (settings.language === 'zh' ? '注意顶部：左侧是限时模式的倒计时，右侧是你的答题进度。' : 'Look top: Left is Time Limit countdown, Right is your solved/total progress.')}
-                                        {tutorialStep === 10 && (settings.language === 'zh' ? '双指轻触屏幕空白处，可隐藏/显示虚拟按键，享受全屏体验！' : 'Double-tap 2 fingers on empty space to toggle controls for full screen!')}
+                                        {tutorialStep === 10 && (settings.language === 'zh' ? '双指同时触碰屏幕空白处，可隐藏/显示虚拟按键，享受全屏体验！' : 'Touch with 2 fingers on empty space to toggle controls for full screen!')}
                                         {tutorialStep === 11 && (settings.language === 'zh' ? '留意机身LED灯：左侧红灯=电源；右侧四灯：黄=运行，蓝/绿=单/双手柄，红=全屏，紫=限时。' : 'LEDs: Left Red=Power. Right 4 LEDs: Gold=Status, Blue/Green=1/2 Pads, Red=Full Screen, Magenta=Time Limit.')}
-                                        {tutorialStep === 12 && (settings.language === 'zh' ? '教程结束！按 [B] 或 ESC 返回主菜单。' : 'Tutorial Complete! Press [B] or ESC to return.')}
+                                        {tutorialStep === 12 && (settings.language === 'zh' ? `教程结束！按 ${showControls ? '[B]' : 'ESC'} 返回主菜单。` : `Tutorial Complete! Press ${showControls ? '[B]' : 'ESC'} to return.`)}
                                     </div>
                                 )}
                                 {isSymmetry && currentSymmetry ? (
@@ -5002,19 +5076,19 @@ const App = () => {
                           )}
                       </div>
 
-                      <div className="flex-1 relative min-h-0 w-full h-full overflow-hidden rounded-sm shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]" ref={canvasContainerRef}>
+                      <div className={`flex-1 relative min-h-0 w-full h-full overflow-hidden ${!showControls ? 'rounded-[0.25rem] sm:rounded-[0.5rem] shadow-[inset_0_0_60px_rgba(0,0,0,0.8)]' : 'rounded-sm shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]'}`} ref={canvasContainerRef}>
                            <div style={{transform: `translate(${shakeX}px, ${shakeY}px)`}} className="w-full h-full">
                               <canvas ref={canvasRef} className={`w-full h-full block ${gameState !== 'PLAYING' ? 'opacity-30 blur-sm' : ''}`} />
                            </div>
-                           {/* Scanline and LCD grid filters */}
-                           <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-30 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] [background-size:100%_2px,3px_100%] z-20"></div>
+                           {/* LCD grid filter (scanlines removed for cleaner look) */}
+                           <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-10 bg-[linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] [background-size:3px_100%] z-20"></div>
                            <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_20px_rgba(0,0,0,0.3)] z-20"></div>
                            
                            {flash && <div className="absolute inset-0 pointer-events-none z-10" style={{backgroundColor: flash.color, opacity: flash.opacity}}></div>}
                             
-                           {!showControls && gameState !== 'MENU' && (
-                               <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center text-[10px] sm:text-xs opacity-70 pointer-events-none z-30 font-led bg-theme-dark/80 text-theme-light backdrop-blur-sm py-1 px-3 rounded-full shadow-lg whitespace-nowrap">
-                                   {settings.language === 'zh' ? 'WASD/方向键: 移动 | J/K: 确认/返回 | 空格: 开始/暂停 | C: 显示按键' : 'WASD/Arrows: Move | J/K: A/B | Space: Start/Pause | C: Toggle UI'}
+                           {showControlsHint && !showControls && gameState !== 'MENU' && (
+                               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-center text-[10px] sm:text-xs opacity-80 pointer-events-none z-30 font-led bg-theme-dark/90 text-theme-light backdrop-blur-sm py-2 px-4 rounded-full shadow-lg whitespace-nowrap animate-pulse">
+                                   {settings.language === 'zh' ? 'WASD/方向键: 移动 | J/K: 旋转/加速 | 空格: 暂停 | C: 显示按键' : 'WASD/Arrows: Move | J/K: Rotate/Boost | Space: Pause | C: Toggle UI'}
                                </div>
                            )}
 
@@ -5022,8 +5096,8 @@ const App = () => {
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-theme-light/90 z-30 font-led text-theme-dark">
                                     <div className="text-4xl font-pixel tracking-widest mb-8 animate-pulse">PAUSED</div>
                                     <div className="flex flex-col gap-4 text-center font-bold">
-                                        <div className="text-xl">[A] {getLocalizedUI('RESUME', settings.language)}</div>
-                                        <div className="text-xl opacity-70">[B] {getLocalizedUI('QUIT', settings.language)}</div>
+                                        <div className="text-xl">{showControls ? '[A]' : '[Enter]'} {getLocalizedUI('RESUME', settings.language)}</div>
+                                        <div className="text-xl opacity-70">{showControls ? '[B]' : '[Esc]'} {getLocalizedUI('QUIT', settings.language)}</div>
                                     </div>
                                 </div>
                             )}
@@ -5031,8 +5105,8 @@ const App = () => {
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-theme-light/95 z-40 font-led text-theme-dark">
                                     <div className="text-2xl font-pixel mb-6 text-center px-4 leading-relaxed tracking-widest">{getLocalizedUI('REALLY_QUIT', settings.language)}</div>
                                     <div className="flex flex-col gap-4 text-xl text-center font-bold">
-                                        <div className="animate-pulse">[A] {getLocalizedUI('YES', settings.language)}</div>
-                                        <div className="opacity-70">[B] {getLocalizedUI('NO', settings.language)}</div>
+                                        <div className="animate-pulse">{showControls ? '[A]' : '[Enter]'} {getLocalizedUI('YES', settings.language)}</div>
+                                        <div className="opacity-70">{showControls ? '[B]' : '[Esc]'} {getLocalizedUI('NO', settings.language)}</div>
                                     </div>
                                 </div>
                             )}
@@ -5040,8 +5114,8 @@ const App = () => {
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-theme-light/95 z-50 font-led text-theme-dark">
                                     <div className="text-2xl font-pixel mb-6 text-center px-4 leading-relaxed tracking-widest">{getLocalizedUI('CONFIRM_EXIT_APP', settings.language)}</div>
                                     <div className="flex flex-col gap-4 text-xl text-center font-bold">
-                                        <div className="animate-pulse">[A] {getLocalizedUI('YES', settings.language)}</div>
-                                        <div className="opacity-70">[B] {getLocalizedUI('NO', settings.language)}</div>
+                                        <div className="animate-pulse">{showControls ? '[A]' : '[Enter]'} {getLocalizedUI('YES', settings.language)}</div>
+                                        <div className="opacity-70">{showControls ? '[B]' : '[Esc]'} {getLocalizedUI('NO', settings.language)}</div>
                                     </div>
                                 </div>
                             )}
@@ -5049,8 +5123,8 @@ const App = () => {
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-theme-light/95 z-40 font-led text-theme-dark">
                                     <div className="text-2xl font-pixel mb-6 text-center px-4 leading-relaxed tracking-widest">{getLocalizedUI('CONFIRM_RESET', settings.language)}</div>
                                     <div className="flex flex-col gap-4 text-xl text-center font-bold">
-                                        <div className="animate-pulse">[A] {getLocalizedUI('YES', settings.language)}</div>
-                                        <div className="opacity-70">[B] {getLocalizedUI('NO', settings.language)}</div>
+                                        <div className="animate-pulse">{showControls ? '[A]' : '[Enter]'} {getLocalizedUI('YES', settings.language)}</div>
+                                        <div className="opacity-70">{showControls ? '[B]' : '[Esc]'} {getLocalizedUI('NO', settings.language)}</div>
                                     </div>
                                 </div>
                             )}
@@ -5086,7 +5160,7 @@ const App = () => {
                                    {menuPage !== 'MAIN' && (
                                        <>
                                           <div className="flex items-center gap-2 border-b border-theme-dark/30 pb-2 mb-2 text-theme-dark">
-                                              <button onClick={() => handleAction('B')} className="text-xs px-2 py-1 border border-theme-dark rounded hover:bg-theme-dark/10 font-bold">[B] {getLocalizedUI('BACK_CMD', settings.language)}</button>
+                                              <button onClick={() => handleAction('B')} className="text-xs px-2 py-1 border border-theme-dark rounded hover:bg-theme-dark/10 font-bold">{showControls ? '[B]' : '[Esc]'} {getLocalizedUI('BACK_CMD', settings.language)}</button>
                                               <span className="flex-1 text-center font-bold tracking-widest">{getLocalizedUI(menuPage, settings.language)}</span>
                                           </div>
                                           <div className="flex-1 overflow-y-auto no-scrollbar space-y-2" ref={menuListRef}>
@@ -5112,20 +5186,30 @@ const App = () => {
                                               ))}
                                               {menuPage === 'SETTINGS' && (
                                                   <>
-                                                      <MenuItem label={getLocalizedUI('SFX', settings.language)} active={menuIndex===0} icon={settings.sound ? Volume2 : VolumeX} value={settings.sound ? getLocalizedUI('ON', settings.language) : getLocalizedUI('OFF', settings.language)} onClick={() => handleMenuClick(0)} onFocus={() => setMenuIndex(0)} />
-                                                      <MenuItem label={getLocalizedUI('MUSIC', settings.language)} active={menuIndex===1} icon={settings.music ? Music : Power} value={settings.music ? getLocalizedUI('ON', settings.language) : getLocalizedUI('OFF', settings.language)} onClick={() => handleMenuClick(1)} onFocus={() => setMenuIndex(1)} />
-                                                      <MenuItem label={getLocalizedUI('VIBE', settings.language)} active={menuIndex===2} icon={settings.vibration ? Smartphone : Waves} value={settings.vibration ? getLocalizedUI('ON', settings.language) : getLocalizedUI('OFF', settings.language)} onClick={() => handleMenuClick(2)} onFocus={() => setMenuIndex(2)} />
-                                                      <MenuItem label={getLocalizedUI('LANG', settings.language)} active={menuIndex===3} icon={Globe} value={settings.language === 'zh' ? '中文' : 'ENG'} onClick={() => handleMenuClick(3)} onFocus={() => setMenuIndex(3)} />
-                                                      <MenuItem label={getLocalizedUI('TIME_LIMIT', settings.language)} active={menuIndex===4} icon={settings.timeLimitMode ? Check : undefined} value={settings.timeLimitMode ? getLocalizedUI('ON', settings.language) : getLocalizedUI('OFF', settings.language)} onClick={() => handleMenuClick(4)} onFocus={() => setMenuIndex(4)} />
-                                                      <MenuItem label={getLocalizedUI('TIME_DURATION', settings.language)} active={menuIndex===5} icon={Clock} value={`${(settings.timeLimitDuration || 180) / 60} MIN`} onClick={() => handleMenuClick(5)} onFocus={() => setMenuIndex(5)} />
-                                                      <MenuItem label={getLocalizedUI('DEADZONE', settings.language)} active={menuIndex===6} icon={Crosshair} type="slider" value={`${(settings.joyDeadzone ?? 0.1).toFixed(2)}`} onClick={() => handleMenuClick(6)} onFocus={() => setMenuIndex(6)} onDecrease={() => handleMenuAdjust(-1, 6)} onIncrease={() => handleMenuAdjust(1, 6)} />
-                                                      <MenuItem label={getLocalizedUI('SENSITIVITY', settings.language)} active={menuIndex===7} icon={Activity} type="slider" value={`${(settings.joySensitivity ?? 1.0).toFixed(1)}`} onClick={() => handleMenuClick(7)} onFocus={() => setMenuIndex(7)} onDecrease={() => handleMenuAdjust(-1, 7)} onIncrease={() => handleMenuAdjust(1, 7)} />
-                                                      <MenuItem label={getLocalizedUI('REPORT_EMAIL', settings.language)} active={menuIndex===8} icon={Send} value={settings.reportEmail ? (settings.reportEmail.length > 10 ? settings.reportEmail.substring(0, 8) + '...' : settings.reportEmail) : getLocalizedUI('UNSET_EMAIL', settings.language)} onClick={() => handleMenuClick(8)} onFocus={() => setMenuIndex(8)} />
-                                                      <MenuItem label={getLocalizedUI('CUSTOM_BGM', settings.language)} active={menuIndex===9} icon={Music} value={settings.customBgmUrl ? (settings.customBgmUrl.length > 10 ? settings.customBgmUrl.substring(0, 8) + '...' : settings.customBgmUrl) : getLocalizedUI('DEFAULT', settings.language)} onClick={() => handleMenuClick(9)} onFocus={() => setMenuIndex(9)} />
+                                                      <div className="text-[10px] font-bold opacity-50 mt-1 mb-1 pl-2 border-b border-theme-dark/20 pb-1">{settings.language === 'zh' ? '基础设置' : 'BASIC'}</div>
+                                                      <MenuItem label={getLocalizedUI('LANG', settings.language)} active={menuIndex===0} icon={Globe} value={settings.language === 'zh' ? '中文' : 'ENG'} onClick={() => handleMenuClick(0)} onFocus={() => setMenuIndex(0)} />
+                                                      <MenuItem label={getLocalizedUI('SFX', settings.language)} active={menuIndex===1} icon={settings.sound ? Volume2 : VolumeX} value={settings.sound ? getLocalizedUI('ON', settings.language) : getLocalizedUI('OFF', settings.language)} onClick={() => handleMenuClick(1)} onFocus={() => setMenuIndex(1)} />
+                                                      <MenuItem label={getLocalizedUI('MUSIC', settings.language)} active={menuIndex===2} icon={settings.music ? Music : Power} value={settings.music ? getLocalizedUI('ON', settings.language) : getLocalizedUI('OFF', settings.language)} onClick={() => handleMenuClick(2)} onFocus={() => setMenuIndex(2)} />
+                                                      <MenuItem label={getLocalizedUI('CUSTOM_BGM', settings.language)} active={menuIndex===3} icon={Music} value={settings.customBgmUrl ? (settings.customBgmUrl.length > 10 ? settings.customBgmUrl.substring(0, 8) + '...' : settings.customBgmUrl) : getLocalizedUI('DEFAULT', settings.language)} onClick={() => handleMenuClick(3)} onFocus={() => setMenuIndex(3)} />
+                                                      <MenuItem label={getLocalizedUI('VIBE', settings.language)} active={menuIndex===4} icon={settings.vibration ? Smartphone : Waves} value={settings.vibration ? getLocalizedUI('ON', settings.language) : getLocalizedUI('OFF', settings.language)} onClick={() => handleMenuClick(4)} onFocus={() => setMenuIndex(4)} />
+                                                      
+                                                      <div className="text-[10px] font-bold opacity-50 mt-3 mb-1 pl-2 border-b border-theme-dark/20 pb-1">{settings.language === 'zh' ? '游戏设置' : 'GAMEPLAY'}</div>
+                                                      <MenuItem label={getLocalizedUI('TIME_LIMIT', settings.language)} active={menuIndex===5} icon={settings.timeLimitMode ? Check : undefined} value={settings.timeLimitMode ? getLocalizedUI('ON', settings.language) : getLocalizedUI('OFF', settings.language)} onClick={() => handleMenuClick(5)} onFocus={() => setMenuIndex(5)} />
+                                                      <div className={settings.timeLimitMode ? '' : 'opacity-40'}>
+                                                          <MenuItem label={getLocalizedUI('TIME_DURATION', settings.language)} active={menuIndex===6} icon={Clock} value={`${(settings.timeLimitDuration || 180) / 60} MIN`} onClick={() => { if(settings.timeLimitMode) handleMenuClick(6); }} onFocus={() => setMenuIndex(6)} />
+                                                      </div>
+                                                      
+                                                      <div className="text-[10px] font-bold opacity-50 mt-3 mb-1 pl-2 border-b border-theme-dark/20 pb-1">{settings.language === 'zh' ? '控制设置' : 'CONTROLS'}</div>
+                                                      <MenuItem label={getLocalizedUI('DEADZONE', settings.language)} active={menuIndex===7} icon={Crosshair} type="slider" value={`${(settings.joyDeadzone ?? 0.1).toFixed(2)}`} onClick={() => handleMenuClick(7)} onFocus={() => setMenuIndex(7)} onDecrease={() => handleMenuAdjust(-1, 7)} onIncrease={() => handleMenuAdjust(1, 7)} />
+                                                      <MenuItem label={getLocalizedUI('SENSITIVITY', settings.language)} active={menuIndex===8} icon={Activity} type="slider" value={`${(settings.joySensitivity ?? 1.0).toFixed(1)}`} onClick={() => handleMenuClick(8)} onFocus={() => setMenuIndex(8)} onDecrease={() => handleMenuAdjust(-1, 8)} onIncrease={() => handleMenuAdjust(1, 8)} />
+                                                      
+                                                      <div className="text-[10px] font-bold opacity-50 mt-3 mb-1 pl-2 border-b border-theme-dark/20 pb-1">{settings.language === 'zh' ? '高级设置' : 'ADVANCED'}</div>
+                                                      <MenuItem label={getLocalizedUI('REPORT_EMAIL', settings.language)} active={menuIndex===9} icon={Send} value={settings.reportEmail ? (settings.reportEmail.length > 10 ? settings.reportEmail.substring(0, 8) + '...' : settings.reportEmail) : getLocalizedUI('UNSET_EMAIL', settings.language)} onClick={() => handleMenuClick(9)} onFocus={() => setMenuIndex(9)} />
                                                       <MenuItem label={settings.language === 'zh' ? 'AI 设置' : 'AI SETTINGS'} active={menuIndex===10} icon={Cpu} onClick={() => handleMenuClick(10)} onFocus={() => setMenuIndex(10)} />
                                                       <MenuItem label={getLocalizedUI('ABOUT', settings.language)} active={menuIndex===11} icon={Lightbulb} onClick={() => handleMenuClick(11)} onFocus={() => setMenuIndex(11)} />
                                                       <MenuItem label={settings.language === 'zh' ? '重置设置' : 'RESET SETTINGS'} active={menuIndex===12} icon={RotateCcw} onClick={() => handleMenuClick(12)} onFocus={() => setMenuIndex(12)} />
-                                                      <div className="text-[10px] text-center opacity-50 mt-2 font-led w-full">
+                                                      
+                                                      <div className="text-[10px] text-center opacity-50 mt-4 font-led w-full">
                                                           {settings.language === 'zh' ? '设置已自动保存' : 'Settings auto-saved'}
                                                       </div>
                                                   </>
@@ -5350,7 +5434,7 @@ const App = () => {
                                                           <div className="text-[10px] leading-relaxed grid grid-cols-1 gap-y-1.5 opacity-90">
                                                               <div className="flex justify-between border-b border-theme-dark/10 pb-1">
                                                                   <span className="font-bold w-[70px] shrink-0">{settings.language === 'zh' ? '全屏手势' : 'Full Screen'}</span>
-                                                                  <span className="text-right">{settings.language === 'zh' ? '双指轻触屏幕空白处' : 'Double-tap 2 fingers on empty space'}</span>
+                                                                  <span className="text-right">{settings.language === 'zh' ? '双指同时触碰屏幕空白处' : 'Touch with 2 fingers on empty space'}</span>
                                                               </div>
                                                               <div className="flex justify-between border-b border-theme-dark/10 pb-1">
                                                                   <span className="font-bold w-[70px] shrink-0">{settings.language === 'zh' ? '左侧指示灯' : 'Left LED'}</span>
@@ -5501,16 +5585,16 @@ const App = () => {
 
                                       <div className="flex flex-col gap-2 sm:gap-3 w-[85%] max-w-[320px] shrink-0 justify-center mx-auto font-pixel">
                                           <button className={`w-full py-2 sm:py-3 text-[12px] sm:text-xl font-bold rounded shadow-lg whitespace-nowrap transition-colors ${menuIndex === 0 ? 'bg-theme-dark text-theme-light animate-pulse' : 'border-2 border-theme-dark text-theme-dark hover:bg-theme-dark/10'}`} onClick={() => handleAction('A', true, 0)} onMouseEnter={() => setMenuIndex(0)}>
-                                              {menuIndex === 0 ? '[A] ' : ''}{getLocalizedUI('RETRY', settings.language).replace(' [A]', '')}
+                                              {menuIndex === 0 ? (showControls ? '[A] ' : '[Enter] ') : ''}{getLocalizedUI('RETRY', settings.language).replace(' [A]', '')}
                                           </button>
                                           <button className={`w-full py-2 sm:py-3 text-[12px] sm:text-xl font-bold rounded shadow-lg whitespace-nowrap transition-colors ${menuIndex === 1 ? 'bg-theme-dark text-theme-light animate-pulse' : 'border-2 border-theme-dark text-theme-dark hover:bg-theme-dark/10'}`} onClick={() => handleAction('A', true, 1)} onMouseEnter={() => setMenuIndex(1)}>
-                                              {menuIndex === 1 ? '[A] ' : ''}{getLocalizedUI('SAVE_SCORE', settings.language)}
+                                              {menuIndex === 1 ? (showControls ? '[A] ' : '[Enter] ') : ''}{getLocalizedUI('SAVE_SCORE', settings.language)}
                                           </button>
                                           <button className={`w-full py-2 sm:py-3 text-[12px] sm:text-xl font-bold rounded shadow-lg whitespace-nowrap transition-colors ${menuIndex === 2 ? 'bg-theme-dark text-theme-light animate-pulse' : 'border-2 border-theme-dark text-theme-dark hover:bg-theme-dark/10'}`} onClick={() => handleAction('A', true, 2)} onMouseEnter={() => setMenuIndex(2)}>
-                                              {menuIndex === 2 ? '[A] ' : ''}{getLocalizedUI('VIEW_REPORT', settings.language).replace(' [B]', '')}
+                                              {menuIndex === 2 ? (showControls ? '[A] ' : '[Enter] ') : ''}{getLocalizedUI('VIEW_REPORT', settings.language).replace(' [B]', '')}
                                           </button>
                                           <button className={`w-full py-2 sm:py-3 text-[12px] sm:text-xl font-bold rounded shadow-lg whitespace-nowrap transition-colors ${menuIndex === 3 ? 'bg-theme-dark text-theme-light animate-pulse' : 'border-2 border-theme-dark text-theme-dark hover:bg-theme-dark/10'}`} onClick={() => handleAction('A', true, 3)} onMouseEnter={() => setMenuIndex(3)}>
-                                              {menuIndex === 3 ? '[A] ' : ''}{settings.language === 'zh' ? '返回主菜单' : 'MAIN MENU'}
+                                              {menuIndex === 3 ? (showControls ? '[A] ' : '[Enter] ') : ''}{settings.language === 'zh' ? '返回主菜单' : 'MAIN MENU'}
                                           </button>
                                       </div>
                                   </div>
