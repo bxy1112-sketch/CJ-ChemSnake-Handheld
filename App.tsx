@@ -337,7 +337,8 @@ const LLM_PROVIDERS: Record<string, { name: string, baseUrl: string, model: stri
     openai: { name: 'OpenAI (ChatGPT)', baseUrl: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o' },
     deepseek: { name: 'DeepSeek', baseUrl: 'https://api.deepseek.com/chat/completions', model: 'deepseek-chat' },
     qwen: { name: 'Tongyi Qianwen', baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', model: 'qwen-vl-max' },
-    minimax: { name: 'MiniMax', baseUrl: 'https://api.minimax.chat/v1/chat/completions', model: 'abab6.5s-chat' }
+    minimax: { name: 'MiniMax', baseUrl: 'https://api.minimax.chat/v1/chat/completions', model: 'abab6.5s-chat' },
+    mimo: { name: 'Xiaomi MiMo', baseUrl: 'https://api.chatmimo.xiaomi.com/v1/chat/completions', model: 'mimo-chat' }
 };
 
 const SYMMETRY_CORE: MoleculeSymmetry[] = [
@@ -5257,6 +5258,7 @@ const App = () => {
                                                               <option value="deepseek">DeepSeek</option>
                                                               <option value="qwen">Tongyi Qianwen (通义千问)</option>
                                                               <option value="minimax">MiniMax</option>
+                                                              <option value="mimo">Xiaomi MiMo</option>
                                                               <option value="custom">Custom (OpenAI Compatible)</option>
                                                           </select>
                                                       </div>
